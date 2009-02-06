@@ -1,8 +1,11 @@
 package AnyEvent::Subprocess;
 use Moose;
+
 use AnyEvent;
 use AnyEvent::Util;
 use AnyEvent::Handle;
+
+use AnyEvent::Subprocess::Running;
 
 use namespace::clean -except => 'meta';
 
@@ -18,44 +21,46 @@ has 'code' => (
     required => 1,
 );
 
-has '_socketpair' => (
-    is      => 'ro',
-    isa     => 'ArrayRef',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-        my ($r, $w) = portable_socketpair;
-        die $r;
-    },
-);
-
-sub socket {
-
-}
-
 sub run {
     my $self = shift;
     my $done = AnyEvent->condvar;
 
-    my $pid = fork;
+    #my ($parent_socket, $child_socket) = $self->_socketpair;
+    my ($parent_stdout, $child_stdout) = portable_pipe;
+    my ($parent_stderr, $child_stderr) = portable_pipe;
 
-    if($pid){
-        my $child_listener;
-        $child_listener = AnyEvent->child (
-            pid => $pid,
-            cb  => sub {
-                my ($pid, $status) = @_;
-                $done->send($status);
-                undef $child_listener
-            },
+    my $parent_stdout_listener = AnyEvent::Handle->new(
+        fh => $parent_stdout,
+    );
+
+    my $parent_stderr_listener = AnyEvent::Handle->new(
+        fh => $parent_stderr,
+    );
+
+    my $child_pid = fork;
+
+    my $child_listener;
+    if($child_pid){
+        $child_listener = AnyEvent->child(
+            pid => $child_pid,
         );
     }
     else {
+        local *STDOUT = $child_stdout;
+        local *STDERR = $child_stderr;
         $self->code->();
+        die "OH NOES";
         exit 0;
     }
 
-    return $done;
+    return AnyEvent::Subprocess::Running->new(
+        child_pid          => $child_pid,
+        child_listener     => $child_listener,
+        completion_condvar => $done,
+        stdout_handle      => $parent_stdout_listener,
+        stderr_handle      => $parent_stderr_listener,
+    );
+
 }
 
 1;
