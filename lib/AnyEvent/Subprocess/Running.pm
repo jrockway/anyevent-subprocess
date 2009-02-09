@@ -74,14 +74,9 @@ sub BUILD {
     $self->_setup_handle( 'stderr_handle', '_read_stderr' );
 }
 
-sub _read_stdout {
-    my ($self, $data) = @_;
-}
-
-sub _read_stderr {
-    my ($self, $data) = @_;
-}
-
+# hook these with roles (or a subclass)
+sub _read_stdout { my ($self, $data) = @_ }
+sub _read_stderr { my ($self, $data) = @_ }
 
 1;
 __END__
