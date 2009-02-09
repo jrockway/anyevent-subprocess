@@ -32,6 +32,8 @@ has 'child_listener' => (
                 $self->completion_condvar->send(
                     AnyEvent::Subprocess::Done->new(
                         exit_status => ($status >> 8),
+                        exit_signal => ($status & 127),
+                        dumped_core => ($status & 128),
                         stdout      => $self->stdout,
                         stderr      => $self->stderr,
                     ),
@@ -77,5 +79,14 @@ sub BUILD {
 # hook these with roles (or a subclass)
 sub _read_stdout { my ($self, $data) = @_ }
 sub _read_stderr { my ($self, $data) = @_ }
+
+# utility methods
+
+sub kill {
+    my $self = shift;
+    my $signal = shift || 9;
+
+    kill $signal, $self->child_pid; # BAI
+}
 
 1;

@@ -1,9 +1,15 @@
 package AnyEvent::Subprocess::Done;
 use Moose;
 
-has 'exit_status' => (
+has [qw/exit_status exit_signal/] => (
     is       => 'ro',
     isa      => 'Int',
+    required => 1,
+);
+
+has 'dumped_core' => (
+    is       => 'ro',
+    isa      => 'Bool',
     required => 1,
 );
 
