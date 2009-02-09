@@ -37,28 +37,20 @@ sub run {
         fh => $parent_stderr,
     );
 
+    AnyEvent::detect;
     my $child_pid = fork;
 
-    my $child_listener;
-    if($child_pid){
-        $child_listener = AnyEvent->child(
-            pid => $child_pid,
-        );
-    }
-    else {
+    unless( $child_pid ){
         local *STDOUT = $child_stdout;
         local *STDERR = $child_stderr;
         $self->code->();
-        die "OH NOES";
         exit 0;
     }
 
     return AnyEvent::Subprocess::Running->new(
-        child_pid          => $child_pid,
-        child_listener     => $child_listener,
-        completion_condvar => $done,
-        stdout_handle      => $parent_stdout_listener,
-        stderr_handle      => $parent_stderr_listener,
+        child_pid     => $child_pid,
+        stdout_handle => $parent_stdout_listener,
+        stderr_handle => $parent_stderr_listener,
     );
 
 }

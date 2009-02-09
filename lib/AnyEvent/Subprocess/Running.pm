@@ -14,15 +14,34 @@ has 'child_pid' => (
 );
 
 has 'child_listener' => (
-    is       => 'ro',
-    # is probably a EV::Child
-    required => 1,
+    is         => 'ro',
+    default => sub {
+        my $self = shift;
+
+        my $child_listener = AnyEvent->child(
+            pid => $self->child_pid,
+            cb => sub {
+                my ($pid, $status) = @_;
+                $self->completion_condvar->send(
+                    AnyEvent::Subprocess::Done->new(
+                        exit_status => ($status >> 8),
+                        stdout      => $self->stdout,
+                        stderr      => $self->stderr,
+                    ),
+                );
+            },
+        );
+
+        return $child_listener;
+    }
 );
 
 has 'completion_condvar' => (
-    is       => 'ro',
-    isa      => 'AnyEvent::CondVar',
-    required => 1,
+    is      => 'ro',
+    isa     => 'AnyEvent::CondVar',
+    default => sub {
+        AnyEvent->condvar,
+    },
 );
 
 has [qw/stdout_handle stderr_handle/] => (
@@ -46,19 +65,6 @@ sub BUILD {
     my ($self) = @_;
     $self->_setup_handle( 'stdout_handle', '_read_stdout' );
     $self->_setup_handle( 'stderr_handle', '_read_stderr' );
-    $self->child_listener->cb( sub {
-        my ($pid, $status) = @_;
-        warn $status;
-        warn $status & 127;
-        warn $status >> 8;
-        $self->completion_condvar->send(
-            AnyEvent::Subprocess::Done->new(
-                exit_status => ($status >> 8),
-                stdout      => $self->stdout,
-                stderr      => $self->stderr,
-            ),
-        );
-    });
 }
 
 sub _read_stdout {
