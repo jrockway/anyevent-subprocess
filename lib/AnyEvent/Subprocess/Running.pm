@@ -25,9 +25,9 @@ has 'child_listener' => (
 
                 # make sure we didn't miss anything
                 $self->_read_stdout( $self->stdout_handle->{rbuf} )
-                  if $self->stdout_handle->{rbuf};
+                  if defined $self->stdout_handle->{rbuf};
                 $self->_read_stderr( $self->stderr_handle->{rbuf} )
-                  if $self->stderr_handle->{rbuf};
+                  if defined $self->stderr_handle->{rbuf};
 
                 $self->completion_condvar->send(
                     AnyEvent::Subprocess::Done->new(

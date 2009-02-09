@@ -7,7 +7,6 @@ use ok 'AnyEvent::Subprocess';
 my $proc = AnyEvent::Subprocess->new(
     code => sub {
         warn "starting child";
-        sleep 1;
         my $line = <STDIN>;
         print "got line: $line";
         warn "child is done";
