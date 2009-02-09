@@ -79,29 +79,3 @@ sub _read_stdout { my ($self, $data) = @_ }
 sub _read_stderr { my ($self, $data) = @_ }
 
 1;
-__END__
-
-# internals below
-has [qw/_stdout_glob _stderr_glob _stdin_glob/] => (
-    is  => 'rw', # don't touch this outside of BUILD
-    isa => 'GlobRef',
-);
-
-has [qw/_stdout_handle _stderr_handle _stdin_handle/] => (
-    is  => 'rw', # don't touch this outside of BUILD
-    isa => 'AnyEvent::Handle',
-);
-
-has '_socketpair' => (
-    is         => 'ro',
-    isa        => 'ArrayRef',
-    lazy       => 1,
-    auto_deref => 1,
-    default    => sub {
-        my $self = shift;
-        my ($r, $w) = portable_socketpair;
-        [$r, $w];
-    },
-);
-
-1;
