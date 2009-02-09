@@ -1,7 +1,9 @@
 package AnyEvent::Subprocess::Done;
 use Moose;
 
-has [qw/exit_status exit_signal/] => (
+# $? is the exit status, the argument to exit ("exit 0") is the value
+# if the process was killed, exit_signal contains the signal that killed it
+has [qw/exit_status exit_value exit_signal/] => (
     is       => 'ro',
     isa      => 'Int',
     required => 1,

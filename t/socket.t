@@ -39,4 +39,4 @@ $run->comm_handle->push_read( json => sub {
 is $got_response->recv, 'hello my child', 'got echo reply';
 
 my $done = $complete->recv;
-is $done->exit_status, 0, 'got exit status 0';
+is $done->exit_value, 0, 'got exit status 0';

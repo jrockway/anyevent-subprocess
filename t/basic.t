@@ -26,6 +26,6 @@ $run->stdin_handle->push_write($line);
 my $done = $condvar->recv;
 isa_ok $done, 'AnyEvent::Subprocess::Done';
 
-is $done->exit_status, 0, 'got exit status 0';
+is $done->exit_value, 0, 'got exit status 0';
 like $done->stderr, qr/^starting child.*^child is done/ms, 'captured stderr';
 is $done->stdout, "got line: $line", 'copied STDIN to STDOUT ok';

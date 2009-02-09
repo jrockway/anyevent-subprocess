@@ -31,7 +31,8 @@ has 'child_listener' => (
 
                 $self->completion_condvar->send(
                     AnyEvent::Subprocess::Done->new(
-                        exit_status => ($status >> 8),
+                        exit_status => $status,
+                        exit_value  => ($status >> 8),
                         exit_signal => ($status & 127),
                         dumped_core => ($status & 128),
                         stdout      => $self->stdout,
