@@ -28,13 +28,18 @@ sub run {
     #my ($parent_socket, $child_socket) = $self->_socketpair;
     my ($parent_stdout, $child_stdout) = portable_pipe;
     my ($parent_stderr, $child_stderr) = portable_pipe;
+    my ($child_stdin, $parent_stdin) = portable_pipe;
 
-    my $parent_stdout_listener = AnyEvent::Handle->new(
+    my $parent_stdout_handle = AnyEvent::Handle->new(
         fh => $parent_stdout,
     );
 
-    my $parent_stderr_listener = AnyEvent::Handle->new(
+    my $parent_stderr_handle = AnyEvent::Handle->new(
         fh => $parent_stderr,
+    );
+
+    my $parent_stdin_handle = AnyEvent::Handle->new(
+        fh => $parent_stdin,
     );
 
     AnyEvent::detect;
@@ -43,14 +48,16 @@ sub run {
     unless( $child_pid ){
         local *STDOUT = $child_stdout;
         local *STDERR = $child_stderr;
+        local *STDIN = $child_stdin;
         $self->code->();
         exit 0;
     }
 
     return AnyEvent::Subprocess::Running->new(
         child_pid     => $child_pid,
-        stdout_handle => $parent_stdout_listener,
-        stderr_handle => $parent_stderr_listener,
+        stdout_handle => $parent_stdout_handle,
+        stderr_handle => $parent_stderr_handle,
+        stdin_handle  => $parent_stdin_handle,
     );
 
 }

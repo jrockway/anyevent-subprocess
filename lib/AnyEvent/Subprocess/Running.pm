@@ -22,6 +22,13 @@ has 'child_listener' => (
             pid => $self->child_pid,
             cb => sub {
                 my ($pid, $status) = @_;
+
+                # make sure we didn't miss anything
+                $self->_read_stdout( $self->stdout_handle->{rbuf} )
+                  if $self->stdout_handle->{rbuf};
+                $self->_read_stderr( $self->stderr_handle->{rbuf} )
+                  if $self->stderr_handle->{rbuf};
+
                 $self->completion_condvar->send(
                     AnyEvent::Subprocess::Done->new(
                         exit_status => ($status >> 8),
@@ -44,7 +51,7 @@ has 'completion_condvar' => (
     },
 );
 
-has [qw/stdout_handle stderr_handle/] => (
+has [qw/stdout_handle stderr_handle stdin_handle/] => (
     is       => 'ro',
     isa      => 'AnyEvent::Handle',
     required => 1,
@@ -74,6 +81,7 @@ sub _read_stdout {
 sub _read_stderr {
     my ($self, $data) = @_;
 }
+
 
 1;
 __END__
