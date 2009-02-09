@@ -25,7 +25,7 @@ sub run {
     my $self = shift;
     my $done = AnyEvent->condvar;
 
-    #my ($parent_socket, $child_socket) = $self->_socketpair;
+    my ($parent_socket, $child_socket) = portable_socketpair;
     my ($parent_stdout, $child_stdout) = portable_pipe;
     my ($parent_stderr, $child_stderr) = portable_pipe;
     my ($child_stdin, $parent_stdin) = portable_pipe;
@@ -42,6 +42,10 @@ sub run {
         fh => $parent_stdin,
     );
 
+    my $parent_comm_handle = AnyEvent::Handle->new(
+        fh => $parent_socket,
+    );
+
     AnyEvent::detect;
     my $child_pid = fork;
 
@@ -49,7 +53,12 @@ sub run {
         local *STDOUT = $child_stdout;
         local *STDERR = $child_stderr;
         local *STDIN = $child_stdin;
-        $self->code->();
+
+        my $child_comm_handle = AnyEvent::Handle->new(
+            fh => $child_socket,
+        );
+
+        $self->code->($child_comm_handle);
         exit 0;
     }
 
@@ -58,6 +67,7 @@ sub run {
         stdout_handle => $parent_stdout_handle,
         stderr_handle => $parent_stderr_handle,
         stdin_handle  => $parent_stdin_handle,
+        comm_handle   => $parent_comm_handle,
     );
 
 }

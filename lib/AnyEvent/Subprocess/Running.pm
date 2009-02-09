@@ -51,7 +51,7 @@ has 'completion_condvar' => (
     },
 );
 
-has [qw/stdout_handle stderr_handle stdin_handle/] => (
+has [qw/stdout_handle stderr_handle stdin_handle comm_handle/] => (
     is       => 'ro',
     isa      => 'AnyEvent::Handle',
     required => 1,
