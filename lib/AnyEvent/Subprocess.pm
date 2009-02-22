@@ -58,6 +58,11 @@ sub run {
             fh => $child_socket,
         );
 
+        # this blocks the child until the parent is ready for it to
+        # start -- not doing this causes very inconsistent
+        # (timing-dependent) results, including lost output
+        sysread STDIN, my $buf, 2; # reading \r\n from parent
+
         $self->code->($child_comm_handle);
         exit 0;
     }
