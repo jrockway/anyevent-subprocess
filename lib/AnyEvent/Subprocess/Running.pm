@@ -7,14 +7,15 @@ use AnyEvent::Subprocess::Done;
 with 'AnyEvent::Subprocess::Running::WithOutputCallbacks',
      'AnyEvent::Subprocess::Running::WithOutputAccumulator';
 
+# we have to set this "later"
 has 'child_pid' => (
-    is       => 'ro',
-    isa      => 'Int',
-    required => 1,
+    is  => 'rw',
+    isa => 'Int',
 );
 
 has 'child_listener' => (
     is      => 'ro',
+    lazy    => 1,
     default => sub {
         my $self = shift;
 
@@ -75,16 +76,6 @@ sub BUILD {
     my ($self) = @_;
     $self->_setup_handle( 'stdout_handle', '_read_stdout' );
     $self->_setup_handle( 'stderr_handle', '_read_stderr' );
-    $self->_unblock_child;
-}
-
-# we start the child reading from STDIN before we do anything else, so
-# that the code block doesn't start executing until we are ready to
-# receive its output.  This method puts a line into STDIN, that is
-# discarded and then causes the child to actually start.
-sub _unblock_child {
-    my $self = shift;
-    $self->stdin_handle->push_write("\015\012");
 }
 
 # hook these with roles (or a subclass)

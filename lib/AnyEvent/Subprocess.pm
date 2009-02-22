@@ -46,10 +46,21 @@ sub run {
         fh => $parent_socket,
     );
 
+    my $run = AnyEvent::Subprocess::Running->new(
+        stdout_handle => $parent_stdout_handle,
+        stderr_handle => $parent_stderr_handle,
+        stdin_handle  => $parent_stdin_handle,
+        comm_handle   => $parent_comm_handle,
+    );
+
     AnyEvent::detect;
     my $child_pid = fork;
 
-    unless( $child_pid ){
+    if ($child_pid){
+        $run->child_pid($child_pid);
+        $run->child_listener; # set this up ASAP;
+    }
+    else {
         local *STDOUT = $child_stdout;
         local *STDERR = $child_stderr;
         local *STDIN = $child_stdin;
@@ -58,23 +69,11 @@ sub run {
             fh => $child_socket,
         );
 
-        # this blocks the child until the parent is ready for it to
-        # start -- not doing this causes very inconsistent
-        # (timing-dependent) results, including lost output
-        sysread STDIN, my $buf, 2; # reading \r\n from parent
-
         $self->code->($child_comm_handle);
         exit 0;
     }
 
-    return AnyEvent::Subprocess::Running->new(
-        child_pid     => $child_pid,
-        stdout_handle => $parent_stdout_handle,
-        stderr_handle => $parent_stderr_handle,
-        stdin_handle  => $parent_stdin_handle,
-        comm_handle   => $parent_comm_handle,
-    );
-
+    return $run;
 }
 
 1;
