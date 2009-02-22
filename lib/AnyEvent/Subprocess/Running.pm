@@ -14,7 +14,7 @@ has 'child_pid' => (
 );
 
 has 'child_listener' => (
-    is         => 'ro',
+    is      => 'ro',
     default => sub {
         my $self = shift;
 
