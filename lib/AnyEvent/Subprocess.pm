@@ -61,6 +61,14 @@ sub run {
         close $parent_stdout;
         close $parent_stderr;
 
+        my $reopen = sub($$$) {
+            open $_[0], $_[1]. '&='. fileno($_[2]) or confess "failed to reopen: $!";
+        };
+
+        $reopen->(*STDIN, '<',  $child_stdin);
+        $reopen->(*STDOUT, '>', $child_stdout);
+        $reopen->(*STDERR, '>', $child_stderr);
+
         local *STDOUT = $child_stdout;
         local *STDERR = $child_stderr;
         local *STDIN = $child_stdin;
