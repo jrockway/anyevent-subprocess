@@ -13,6 +13,11 @@ has 'child_pid' => (
     isa => 'Int',
 );
 
+after 'child_pid' => sub {
+    my ($self, $pid) = @_;
+    $self->child_listener if defined $pid;
+};
+
 has 'child_listener' => (
     is      => 'ro',
     lazy    => 1,

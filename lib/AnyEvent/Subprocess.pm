@@ -80,7 +80,6 @@ sub run {
     }
 
     $run->child_pid($child_pid);
-    $run->child_listener; # vivify this, now that the pid is known
 
     close $child_socket;
     close $child_stdin;
