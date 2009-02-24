@@ -61,6 +61,11 @@ sub _setup_handle {
 sub _send_completion_message {
     my ($self, $status) = @_;
 
+    if(AnyEvent::detect() eq 'AnyEvent::Impl::EV'){
+        require EV;
+        EV::loop(EV::LOOP_NONBLOCK());
+    }
+
     $self->stdout_handle->eof_condvar->recv;
     $self->stderr_handle->eof_condvar->recv;
 
