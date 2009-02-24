@@ -53,6 +53,7 @@ sub _setup_handle {
         my ($handle, $data, $eol) = @_;
         $self->$method_name($data.$eol);
         $handle->push_read(line => $reader);
+        return;
     };
     $self->$handle_name->push_read(line => $reader);
 }
@@ -60,18 +61,8 @@ sub _setup_handle {
 sub _send_completion_message {
     my ($self, $status) = @_;
 
-    # for some reason, we need to call into the event loop one more
-    # time to get our last events.  i tried waiting for the handles to
-    # send EOF events, but they never get sent.
-    my $var = AnyEvent->condvar;
-    if(AnyEvent::detect() eq 'AnyEvent::Impl::EV'){
-        # for some reason, the EV event loop gets stuck and needs help
-        # getting restarted.  i really need to figure this out and fix
-        # it.
-        EV::loop(EV::LOOP_NONBLOCK());
-    }
-    $var->send;
-    $var->recv;
+    $self->stdout_handle->eof_condvar->recv;
+    $self->stderr_handle->eof_condvar->recv;
 
     $self->completion_condvar->send(
         AnyEvent::Subprocess::Done->new(

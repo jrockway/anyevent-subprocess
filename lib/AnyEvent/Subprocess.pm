@@ -3,8 +3,7 @@ use Moose;
 
 use AnyEvent;
 use AnyEvent::Util;
-use AnyEvent::Handle;
-
+use AnyEvent::Subprocess::Handle;
 use AnyEvent::Subprocess::Running;
 
 use namespace::clean -except => 'meta';
@@ -30,19 +29,19 @@ sub run {
     my ($parent_stderr, $child_stderr) = portable_pipe;
     my ($child_stdin, $parent_stdin) = portable_pipe;
 
-    my $parent_stdout_handle = AnyEvent::Handle->new(
+    my $parent_stdout_handle = AnyEvent::Subprocess::Handle->new(
         fh => $parent_stdout,
     );
 
-    my $parent_stderr_handle = AnyEvent::Handle->new(
+    my $parent_stderr_handle = AnyEvent::Subprocess::Handle->new(
         fh => $parent_stderr,
     );
 
-    my $parent_stdin_handle = AnyEvent::Handle->new(
+    my $parent_stdin_handle = AnyEvent::Subprocess::Handle->new(
         fh => $parent_stdin,
     );
 
-    my $parent_comm_handle = AnyEvent::Handle->new(
+    my $parent_comm_handle = AnyEvent::Subprocess::Handle->new(
         fh => $parent_socket,
     );
 
@@ -53,7 +52,6 @@ sub run {
         comm_handle   => $parent_comm_handle,
     );
 
-    AnyEvent::detect;
     my $child_pid = fork;
     unless ($child_pid) {
         close $parent_socket;
