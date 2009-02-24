@@ -9,7 +9,7 @@ sub new {
     my $cv = AnyEvent->condvar;
     my $send = sub {
         my ($handle) = @_;
-         $cv->send(1);
+        $cv->send(1);
     };
 
     push @args, on_eof => $send, on_error => $send;
@@ -21,4 +21,4 @@ sub new {
 
 sub eof_condvar { shift->{_eof_condvar} }
 
-1
+1;
