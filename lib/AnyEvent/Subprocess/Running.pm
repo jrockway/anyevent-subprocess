@@ -23,23 +23,7 @@ has 'child_listener' => (
             pid => $self->child_pid,
             cb => sub {
                 my ($pid, $status) = @_;
-
-                # make sure we didn't miss anything
-                $self->_read_stdout( $self->stdout_handle->{rbuf} )
-                  if defined $self->stdout_handle->{rbuf};
-                $self->_read_stderr( $self->stderr_handle->{rbuf} )
-                  if defined $self->stderr_handle->{rbuf};
-
-                $self->completion_condvar->send(
-                    AnyEvent::Subprocess::Done->new(
-                        exit_status => $status,
-                        exit_value  => ($status >> 8),
-                        exit_signal => ($status & 127),
-                        dumped_core => ($status & 128),
-                        stdout      => $self->stdout,
-                        stderr      => $self->stderr,
-                    ),
-                );
+                $self->_send_completion_message($status);
             },
         );
 
@@ -63,12 +47,41 @@ has [qw/stdout_handle stderr_handle stdin_handle comm_handle/] => (
 
 sub _setup_handle {
     my ($self, $handle_name, $method_name) = @_;
-    $self->$handle_name->on_read(
-        sub {
-            my ($handle) = @_;
-            $self->$method_name($handle->{rbuf});
-            $handle->{rbuf} = '';
-        },
+
+    my $reader;
+    $reader = sub {
+        my ($handle, $data, $eol) = @_;
+        $self->$method_name($data.$eol);
+        $handle->push_read(line => $reader);
+    };
+    $self->$handle_name->push_read(line => $reader);
+}
+
+sub _send_completion_message {
+    my ($self, $status) = @_;
+
+    # for some reason, we need to call into the event loop one more
+    # time to get our last events.  i tried waiting for the handles to
+    # send EOF events, but they never get sent.
+    my $var = AnyEvent->condvar;
+    if(AnyEvent::detect() eq 'AnyEvent::Impl::EV'){
+        # for some reason, the EV event loop gets stuck and needs help
+        # getting restarted.  i really need to figure this out and fix
+        # it.
+        EV::loop(EV::LOOP_NONBLOCK());
+    }
+    $var->send;
+    $var->recv;
+
+    $self->completion_condvar->send(
+        AnyEvent::Subprocess::Done->new(
+            exit_status => $status,
+            exit_value  => ($status >> 8),
+            exit_signal => ($status & 127),
+            dumped_core => ($status & 128),
+            stdout      => $self->stdout,
+            stderr      => $self->stderr,
+        ),
     );
 }
 

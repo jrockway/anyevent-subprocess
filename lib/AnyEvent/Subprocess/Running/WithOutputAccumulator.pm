@@ -5,6 +5,9 @@ use MooseX::AttributeHelpers;
 # TODO: make these timestamped arrays so we can see interleaved
 # stdout/stderr
 
+# in the mean time, don't rely on these attributes being strings, they
+# might become objects that stringify instead.
+
 has 'stdout' => (
     metaclass => 'String',
     is        => 'ro',

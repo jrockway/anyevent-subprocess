@@ -55,12 +55,12 @@ sub run {
 
     AnyEvent::detect;
     my $child_pid = fork;
+    unless ($child_pid) {
+        close $parent_socket;
+        close $parent_stdin;
+        close $parent_stdout;
+        close $parent_stderr;
 
-    if ($child_pid){
-        $run->child_pid($child_pid);
-        $run->child_listener; # set this up ASAP;
-    }
-    else {
         local *STDOUT = $child_stdout;
         local *STDERR = $child_stderr;
         local *STDIN = $child_stdin;
@@ -72,6 +72,14 @@ sub run {
         $self->code->($child_comm_handle);
         exit 0;
     }
+
+    $run->child_pid($child_pid);
+    $run->child_listener; # vivify this, now that the pid is known
+
+    close $child_socket;
+    close $child_stdin;
+    close $child_stdout;
+    close $child_stderr;
 
     return $run;
 }
