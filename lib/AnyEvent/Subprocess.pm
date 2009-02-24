@@ -52,6 +52,7 @@ sub run {
         comm_handle   => $parent_comm_handle,
     );
 
+    AnyEvent::detect;
     my $child_pid = fork;
     unless ($child_pid) {
         close $parent_socket;
