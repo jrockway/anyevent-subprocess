@@ -1,8 +1,10 @@
 package AnyEvent::Subprocess::Running;
 use Moose;
+use MooseX::AttributeHelpers;
 use AnyEvent;
 use AnyEvent::Handle;
 use AnyEvent::Subprocess::Done;
+use List::Util qw(reduce);
 
 with 'AnyEvent::Subprocess::Running::WithOutputCallbacks',
      'AnyEvent::Subprocess::Running::WithOutputAccumulator';
@@ -13,28 +15,47 @@ has 'child_pid' => (
     isa => 'Int',
 );
 
-after 'child_pid' => sub {
+after child_pid => sub {
     my ($self, $pid) = @_;
     $self->child_listener if defined $pid;
 };
 
-has 'child_listener' => (
-    is      => 'ro',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-
-        my $child_listener = AnyEvent->child(
-            pid => $self->child_pid,
-            cb => sub {
-                my ($pid, $status) = @_;
-                $self->_send_completion_message($status);
-            },
-        );
-
-        return $child_listener;
-    }
+# this is updated by callbacks for EOF and child exit
+has 'completion_flags' => (
+    metaclass => 'Collection::Hash',
+    is        => 'ro',
+    isa       => 'HashRef',
+    default   => sub {+{}},
+    required  => 1,
+    provides  => {
+        set => 'set_completion_flag',
+    },
 );
+
+# every time a callback sets a completion flag, check if everthing is
+# done.  if so, send to the completion condvar
+after set_completion_flag => sub {
+    my $self = shift;
+    my @fields = qw/stdout_handle stderr_handle/;
+    my $done = reduce { $a && $b }
+      (1,
+      (map { $self->completion_flags->{$_} } @fields),
+      exists $self->completion_flags->{child});
+
+    if($done){
+        my $status = $self->completion_flags->{child};
+        $self->completion_condvar->send(
+            AnyEvent::Subprocess::Done->new(
+                exit_status => $status,
+                exit_value  => ($status >> 8),
+                exit_signal => ($status & 127),
+                dumped_core => ($status & 128),
+                stdout      => $self->stdout,
+                stderr      => $self->stderr,
+            ),
+        );
+    }
+};
 
 has 'completion_condvar' => (
     is      => 'ro',
@@ -44,52 +65,52 @@ has 'completion_condvar' => (
     },
 );
 
+has 'child_listener' => (
+    is      => 'ro',
+    lazy    => 1,
+    default => sub {
+        my $self = shift;
+        my $child_listener = AnyEvent->child(
+            pid => $self->child_pid,
+            cb => sub {
+                my ($pid, $status) = @_;
+                $self->set_completion_flag( child => $status );
+            },
+        );
+        return $child_listener;
+    }
+);
+
 has [qw/stdout_handle stderr_handle stdin_handle comm_handle/] => (
     is       => 'ro',
-    isa      => 'AnyEvent::Handle',
+    isa      => 'AnyEvent::Subprocess::Handle',
     required => 1,
 );
 
 sub _setup_handle {
     my ($self, $handle_name, $method_name) = @_;
 
-    my $reader;
-    $reader = sub {
-        my ($handle, $data, $eol) = @_;
-        $self->$method_name($data.$eol);
-        $handle->push_read(line => $reader);
-        return;
-    };
-    $self->$handle_name->push_read(line => $reader);
-}
-
-sub _send_completion_message {
-    my ($self, $status) = @_;
-
-    if(AnyEvent::detect() eq 'AnyEvent::Impl::EV'){
-        require EV;
-        EV::loop(EV::LOOP_NONBLOCK());
+    if($method_name){
+        my $reader;
+        $reader = sub {
+            my ($handle, $data, $eol) = @_;
+            $self->$method_name($data.$eol);
+            $handle->push_read(line => $reader);
+            return;
+        };
+        $self->$handle_name->push_read(line => $reader);
     }
 
-    $self->stdout_handle->eof_condvar->recv;
-    $self->stderr_handle->eof_condvar->recv;
-
-    $self->completion_condvar->send(
-        AnyEvent::Subprocess::Done->new(
-            exit_status => $status,
-            exit_value  => ($status >> 8),
-            exit_signal => ($status & 127),
-            dumped_core => ($status & 128),
-            stdout      => $self->stdout,
-            stderr      => $self->stderr,
-        ),
-    );
+    $self->$handle_name->eof_condvar->cb(sub {
+      $self->set_completion_flag($handle_name, 1);
+    });
 }
 
 sub BUILD {
     my ($self) = @_;
     $self->_setup_handle( 'stdout_handle', '_read_stdout' );
     $self->_setup_handle( 'stderr_handle', '_read_stderr' );
+   #  $self->_setup_handle( 'comm_handle' );
 }
 
 # hook these with roles (or a subclass)
