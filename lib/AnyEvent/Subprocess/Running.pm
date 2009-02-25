@@ -36,10 +36,9 @@ has 'completion_flags' => (
 # done.  if so, send to the completion condvar
 after set_completion_flag => sub {
     my $self = shift;
-    my @fields = qw/stdout_handle stderr_handle/;
     my $done = reduce { $a && $b }
       (1,
-      (map { $self->completion_flags->{$_} } @fields),
+      (map { $self->completion_flags->{$_} } qw/stdout_handle stderr_handle/),
       exists $self->completion_flags->{child});
 
     if($done){
@@ -54,6 +53,11 @@ after set_completion_flag => sub {
                 stderr      => $self->stderr,
             ),
         );
+
+        for my $name (qw/stdin_handle stdout_handle stderr_handle comm_handle/){
+            my $h = $self->$name;
+            $h->destroy;
+        }
     }
 };
 
@@ -110,7 +114,7 @@ sub BUILD {
     my ($self) = @_;
     $self->_setup_handle( 'stdout_handle', '_read_stdout' );
     $self->_setup_handle( 'stderr_handle', '_read_stderr' );
-   #  $self->_setup_handle( 'comm_handle' );
+    $self->_setup_handle( 'comm_handle' );
 }
 
 # hook these with roles (or a subclass)

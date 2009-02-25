@@ -77,6 +77,7 @@ sub run {
         );
 
         $self->code->($child_comm_handle);
+
         exit 0;
     }
 
