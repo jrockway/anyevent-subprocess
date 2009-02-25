@@ -1,6 +1,8 @@
 package AnyEvent::Subprocess;
 use Moose;
 
+our $VERSION = 0.01;
+
 use AnyEvent;
 use AnyEvent::Util;
 use AnyEvent::Subprocess::Handle;
