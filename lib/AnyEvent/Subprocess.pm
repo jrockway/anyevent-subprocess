@@ -69,7 +69,7 @@ sub run {
             open $_[0], $_[1]. '&='. fileno($_[2]) or confess "failed to reopen: $!";
         };
 
-        $reopen->(*STDIN, '<',  $child_stdin);
+        $reopen->(*STDIN,  '<', $child_stdin);
         $reopen->(*STDOUT, '>', $child_stdout);
         $reopen->(*STDERR, '>', $child_stderr);
 

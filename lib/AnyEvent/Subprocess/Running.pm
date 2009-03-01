@@ -9,6 +9,27 @@ use Event::Join;
 with 'AnyEvent::Subprocess::Running::WithOutputCallbacks',
      'AnyEvent::Subprocess::Running::WithOutputAccumulator';
 
+has 'on_stdout' => (
+    metaclass  => 'Collection::Array',
+    is         => 'ro',
+    isa        => 'ArrayRef[CodeRef]',
+    required   => 1,
+    default    => sub { [] },
+    provides   => { push => 'add_stdout_watcher' },
+    auto_deref => 1,
+);
+
+
+has 'on_stderr' => (
+    metaclass  => 'Collection::Array',
+    is         => 'ro',
+    isa        => 'ArrayRef[CodeRef]',
+    required   => 1,
+    default    => sub { [] },
+    provides   => { push => 'add_stderr_watcher' },
+    auto_deref => 1,
+);
+
 # we have to set this "later"
 has 'child_pid' => (
     is  => 'rw',
@@ -110,8 +131,8 @@ sub BUILD {
 }
 
 # hook these with roles (or a subclass)
-sub _read_stdout { my ($self, $data) = @_ }
-sub _read_stderr { my ($self, $data) = @_ }
+sub _read_stdout { my ($self, $data) = @_; $_->($self, $data) for $self->on_stdout }
+sub _read_stderr { my ($self, $data) = @_; $_->($self, $data) for $self->on_stderr }
 
 # utility methods
 
