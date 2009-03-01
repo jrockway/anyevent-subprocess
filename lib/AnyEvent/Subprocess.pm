@@ -16,6 +16,13 @@ has 'code' => (
     required => 1,
 );
 
+has 'before_fork_hook' => (
+    is       => 'ro',
+    isa      => 'CodeRef',
+    default  => sub { sub { } },
+    required => 1,
+);
+
 sub run {
     my $self = shift;
     my $done = AnyEvent->condvar;
@@ -47,6 +54,8 @@ sub run {
         stdin_handle  => $parent_stdin_handle,
         comm_handle   => $parent_comm_handle,
     );
+
+    $self->before_fork_hook->($run);
 
     AnyEvent::detect;
     my $child_pid = fork;
