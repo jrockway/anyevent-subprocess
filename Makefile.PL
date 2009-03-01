@@ -10,6 +10,7 @@ requires 'MooseX::AttributeHelpers';
 requires 'namespace::clean';
 requires 'AnyEvent';
 requires 'List::Util';
+requires 'Event::Join';
 
 test_requires 'Test::More';
 test_requires 'ok';
