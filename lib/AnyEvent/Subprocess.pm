@@ -10,12 +10,6 @@ use AnyEvent::Subprocess::Running;
 
 use namespace::clean -except => 'meta';
 
-has [qw/on_stdout on_stderr/] => (
-    is      => 'ro',
-    isa     => 'CodeRef',
-    default => sub { sub { } },
-);
-
 has 'code' => (
     is       => 'ro',
     isa      => 'CodeRef', # TODO arrayref or string for `system`
