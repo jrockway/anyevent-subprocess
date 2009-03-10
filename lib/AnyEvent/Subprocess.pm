@@ -23,6 +23,20 @@ has 'before_fork_hook' => (
     required => 1,
 );
 
+my %loop_killers = (
+    'AnyEvent::Impl::POE' => sub {
+        POE::Kernel->stop;
+    },
+    'AnyEvent::Impl::Event' => sub {
+        for my $watcher (Event::all_watchers()){
+            $watcher->cancel;
+        }
+    },
+    'AnyEvent::Impl::EV' => sub {
+        EV::cancel_all_watchers();
+    },
+);
+
 sub run {
     my $self = shift;
     my $done = AnyEvent->condvar;
@@ -57,7 +71,7 @@ sub run {
 
     $self->before_fork_hook->($run);
 
-    AnyEvent::detect;
+    my $loop_type = AnyEvent::detect;
     my $child_pid = fork;
     unless ($child_pid) {
         close $parent_socket;
@@ -65,6 +79,14 @@ sub run {
         close $parent_stdout;
         close $parent_stderr;
 
+        my $loop_killer = $loop_killers{$loop_type};
+        $loop_killer->() if $loop_killer;
+        if(!$loop_killer){
+          print {*STDERR} "WARNING: UNSUPPORTED EVENT LOOP IN USE, ".
+              "CHILD MUST NOT CALL INTO EVENT LOOP!\n";
+        }
+
+        # setup stdin/stdout/stderr
         my $reopen = sub($$$) {
             open $_[0], $_[1]. '&='. fileno($_[2]) or confess "failed to reopen: $!";
         };
