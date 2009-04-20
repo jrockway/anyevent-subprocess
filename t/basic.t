@@ -35,5 +35,5 @@ my $done = $condvar->recv;
 isa_ok $done, 'AnyEvent::Subprocess::Done';
 
 is $done->exit_value, 0, 'got exit status 0';
-like $done->stderr, qr/^starting child.*^child is done/ms, 'captured stderr';
-is $done->stdout, "got line: $line", 'copied STDIN to STDOUT ok';
+like $run->stderr_handle->rbuf, qr/^starting child.*^child is done/ms, 'captured stderr';
+is $run->stdout_handle->rbuf, "got line: $line", 'copied STDIN to STDOUT ok';

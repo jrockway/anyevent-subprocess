@@ -6,30 +6,6 @@ use AnyEvent::Handle;
 use AnyEvent::Subprocess::Done;
 use Event::Join;
 
-with 'AnyEvent::Subprocess::Running::WithOutputCallbacks',
-     'AnyEvent::Subprocess::Running::WithOutputAccumulator';
-
-has 'on_stdout' => (
-    metaclass  => 'Collection::Array',
-    is         => 'ro',
-    isa        => 'ArrayRef[CodeRef]',
-    required   => 1,
-    default    => sub { [] },
-    provides   => { push => 'add_stdout_watcher' },
-    auto_deref => 1,
-);
-
-
-has 'on_stderr' => (
-    metaclass  => 'Collection::Array',
-    is         => 'ro',
-    isa        => 'ArrayRef[CodeRef]',
-    required   => 1,
-    default    => sub { [] },
-    provides   => { push => 'add_stderr_watcher' },
-    auto_deref => 1,
-);
-
 # we have to set this "later"
 has 'child_pid' => (
     is  => 'rw',
@@ -83,58 +59,44 @@ has 'child_event_joiner' => (
                         exit_value  => ($status >> 8),
                         exit_signal => ($status & 127),
                         dumped_core => ($status & 128),
-                        stdout      => $self->stdout,
-                        stderr      => $self->stderr,
                     ),
                 );
 
                 for my $name (qw/stdin_handle stdout_handle stderr_handle comm_handle/){
                     my $h = $self->$name;
-                    $h->destroy;
+                    my $method = "close_$name";
+                    $self->$method;
                 }
             }
         );
     },
 );
 
-has [qw/stdout_handle stderr_handle stdin_handle comm_handle/] => (
+has [qw/stdin_handle stdout_handle stderr_handle comm_handle/] => (
     is       => 'ro',
     isa      => 'AnyEvent::Subprocess::Handle',
     required => 1,
 );
 
-sub _setup_handle {
-    my ($self, $handle_name, $method_name) = @_;
-
-    if($method_name){
-        my $reader;
-        $reader = sub {
-            my ($handle, $data, $eol) = @_;
-            $self->$method_name($data.$eol);
-            $handle->push_read(line => $reader);
-            return;
-        };
-        $self->$handle_name->push_read(line => $reader);
-    }
-
-    $self->$handle_name->eof_condvar->cb(
-        $self->child_event_joiner->event_sender_for($handle_name),
-    ) if $method_name;
-    # for some reason, we never get an EOF event for the comm_handle
+for my $handle (map { "${_}_handle" } qw/stdin stdout stderr comm/){
+    __PACKAGE__->meta->add_method(
+        "close_${handle}" => sub {
+            my $self = shift;
+            my $fh = $self->$handle->fh;
+            close $fh if $fh; # closing "again" is not an error
+        },
+    );
 }
 
 sub BUILD {
     my ($self) = @_;
-    $self->_setup_handle( 'stdout_handle', '_read_stdout' );
-    $self->_setup_handle( 'stderr_handle', '_read_stderr' );
-    $self->_setup_handle( 'comm_handle' );
+
+    for my $handle_name (qw/stdout_handle stderr_handle/){
+        $self->$handle_name->eof_condvar->cb(
+            $self->child_event_joiner->event_sender_for($handle_name),
+        );
+    }
 }
-
-# hook these with roles (or a subclass)
-sub _read_stdout { my ($self, $data) = @_; $_->($self, $data) for $self->on_stdout }
-sub _read_stderr { my ($self, $data) = @_; $_->($self, $data) for $self->on_stderr }
-
-# utility methods
 
 sub kill {
     my $self = shift;

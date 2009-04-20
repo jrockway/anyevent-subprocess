@@ -15,10 +15,4 @@ has 'dumped_core' => (
     required => 1,
 );
 
-has [qw/stdout stderr/] => (
-    is       => 'ro',
-    isa      => 'Str',
-    required => 1,
-);
-
 1;

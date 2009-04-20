@@ -12,7 +12,9 @@ sub new {
         $cv->send(1);
     };
 
-    push @args, on_eof => $send, on_error => $send;
+    # if the on_read is not provided, we never get notified of handle
+    # close
+    push @args, on_eof => $send, on_error => $send, on_read => sub {};
 
     my $self = $class->SUPER::new(@args);
     $self->{_eof_condvar} = $cv;
