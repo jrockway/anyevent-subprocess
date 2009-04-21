@@ -81,7 +81,13 @@ sub run {
             fh => $child_socket,
         );
 
-        $self->code->($child_comm_handle);
+        eval {
+            $self->code->($child_comm_handle);
+        };
+        if($@){
+            print {*STDERR} $@;
+            exit 255;
+        }
 
         exit 0;
     }
