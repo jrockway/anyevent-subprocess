@@ -2,26 +2,33 @@ package AnyEvent::Subprocess::Running;
 use Moose;
 use MooseX::AttributeHelpers;
 use AnyEvent;
-use AnyEvent::Handle;
 use AnyEvent::Subprocess::Done;
 use Event::Join;
+
+with 'MooseX::Traits';
+
+has '+_trait_namespace' => (
+    default => 'AnyEvent::Subprocess::Running::Role',
+);
 
 # we have to set this "later"
 has 'child_pid' => (
     is  => 'rw',
     isa => 'Int',
+    trigger => sub {
+        my ($self, $pid) = @_;
+        $self->child_listener if defined $pid;
+    },
 );
-
-after child_pid => sub {
-    my ($self, $pid) = @_;
-    $self->child_listener if defined $pid;
-};
 
 has 'child_listener' => (
     is      => 'ro',
     lazy    => 1,
     default => sub {
         my $self = shift;
+        confess 'child_listener being built too early'
+          unless $self->child_pid;
+
         my $child_listener = AnyEvent->child(
             pid => $self->child_pid,
             cb => sub {
@@ -41,6 +48,23 @@ has 'completion_condvar' => (
     },
 );
 
+has 'child_events' => (
+    is      => 'ro',
+    isa     => 'ArrayRef[Str]',
+    lazy    => 1,
+    builder => '_build_child_events',
+);
+
+sub _build_child_events {
+    my $self = shift;
+    return [qw/child/];
+}
+
+sub _finalize {
+    my $self = shift;
+    return;
+}
+
 has 'child_event_joiner' => (
     is       => 'ro',
     isa      => 'Event::Join',
@@ -48,7 +72,7 @@ has 'child_event_joiner' => (
     default  => sub {
         my $self = shift;
         return Event::Join->new(
-            events        => [qw/stdout_handle stderr_handle child/],
+            events        => $self->child_events,
             on_completion => sub {
                 my $events = shift;
                 my $status = $events->{child};
@@ -56,47 +80,14 @@ has 'child_event_joiner' => (
                 $self->completion_condvar->send(
                     AnyEvent::Subprocess::Done->new(
                         exit_status => $status,
-                        exit_value  => ($status >> 8),
-                        exit_signal => ($status & 127),
-                        dumped_core => ($status & 128),
                     ),
                 );
 
-                for my $name (qw/stdin_handle stdout_handle stderr_handle comm_handle/){
-                    my $h = $self->$name;
-                    my $method = "close_$name";
-                    $self->$method;
-                }
+                $self->_finalize;
             }
         );
     },
 );
-
-has [qw/stdin_handle stdout_handle stderr_handle comm_handle/] => (
-    is       => 'ro',
-    isa      => 'AnyEvent::Subprocess::Handle',
-    required => 1,
-);
-
-for my $handle (map { "${_}_handle" } qw/stdin stdout stderr comm/){
-    __PACKAGE__->meta->add_method(
-        "close_${handle}" => sub {
-            my $self = shift;
-            my $fh = $self->$handle->fh;
-            close $fh if $fh; # closing "again" is not an error
-        },
-    );
-}
-
-sub BUILD {
-    my ($self) = @_;
-
-    for my $handle_name (qw/stdout_handle stderr_handle/){
-        $self->$handle_name->eof_condvar->cb(
-            $self->child_event_joiner->event_sender_for($handle_name),
-        );
-    }
-}
 
 sub kill {
     my $self = shift;

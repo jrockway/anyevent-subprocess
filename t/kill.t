@@ -4,8 +4,9 @@ use Test::More tests => 3;
 
 use AnyEvent::Subprocess;
 
-my $proc = AnyEvent::Subprocess->new(
-    code => sub {
+my $proc = AnyEvent::Subprocess->new_with_traits(
+    traits => ['WithCommHandle'],
+    code   => sub {
         my $socket = shift;
         while(1) {
             # OH NOES

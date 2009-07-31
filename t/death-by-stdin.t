@@ -4,8 +4,9 @@ use Test::More tests => 4;
 
 use AnyEvent::Subprocess;
 
-my $proc = AnyEvent::Subprocess->new(
-    code => sub {
+my $proc = AnyEvent::Subprocess->new_with_traits(
+    traits => ['WithStandardHandles', 'WithCommHandle'],
+    code   => sub {
         while(<>) {
             $| = 1;
             chomp;
@@ -31,7 +32,7 @@ $run->stdin_handle->push_write("This is line 1\n");
 my $line = $got_line->recv;
 is $line, "Got line: This is line 1", 'echoed line OK';
 
-$run->close_stdin_handle;
+$run->stdin_handle->do_not_want;
 
 my $exit = $got_exit->recv;
 is $exit, "Exiting cleanly", 'got message about exiting cleanly';

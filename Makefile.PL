@@ -5,12 +5,11 @@ use inc::Module::Install;
 name 'AnyEvent-Subprocess';
 all_from 'lib/AnyEvent/Subprocess.pm';
 
-requires 'Moose';
-requires 'MooseX::AttributeHelpers';
-requires 'namespace::clean';
 requires 'AnyEvent';
-requires 'List::Util';
+requires 'AnyEventX::Cancel';
 requires 'Event::Join';
+requires 'Moose';
+requires 'namespace::clean';
 
 test_requires 'Test::More';
 test_requires 'ok';

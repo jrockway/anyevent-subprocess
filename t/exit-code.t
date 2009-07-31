@@ -15,4 +15,3 @@ my $done = $proc->run->completion_condvar->recv;
 ok $done, 'done';
 
 is $done->exit_value, 123, 'got exit status 123';
-

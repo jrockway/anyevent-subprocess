@@ -4,8 +4,9 @@ use Test::More tests => 2;
 
 use AnyEvent::Subprocess;
 
-my $proc = AnyEvent::Subprocess->new(
-    code => sub {
+my $proc = AnyEvent::Subprocess->new_with_traits(
+    traits => ['WithCommHandle'],
+    code   => sub {
         my $done = AnyEvent->condvar;
         my $socket = shift;
         $socket->push_read( json => sub {
