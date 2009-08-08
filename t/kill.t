@@ -10,7 +10,7 @@ my $proc = AnyEvent::Subprocess->new_with_traits(
         my $socket = shift;
         while(1) {
             # OH NOES
-            $socket->push_write('hihihihihihi');
+            print {$socket} "hihihihihihi\n";
         }
     },
 );

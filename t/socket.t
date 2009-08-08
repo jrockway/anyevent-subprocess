@@ -9,9 +9,10 @@ my $proc = AnyEvent::Subprocess->new_with_traits(
     code   => sub {
         my $done = AnyEvent->condvar;
         my $socket = shift;
-        $socket->push_read( json => sub {
+        my $handle = AnyEvent::Handle->new( fh => $socket );
+        $handle->push_read( json => sub {
             my ($handle, $obj) = @_;
-            $socket->push_write( json => {
+            $handle->push_write( json => {
                 cmd => 'echo',
                 msg => $obj->{msg},
             });

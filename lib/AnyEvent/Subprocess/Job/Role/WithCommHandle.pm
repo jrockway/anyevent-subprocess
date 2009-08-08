@@ -41,6 +41,10 @@ around '_build_run_traits' => sub {
 before '_child_setup_hook' => sub {
     my $self = shift;
     $self->_comm_handle->[0]->do_not_want;
+
+    # XXX: the child handle needs to be constructed in the child;
+    # otherwise fail.  we keep the filehandle, though.
+    $self->_comm_handle->[1]->destroy;
 };
 
 before '_parent_finalize_hook' => sub {
@@ -51,7 +55,7 @@ before '_parent_finalize_hook' => sub {
 around '_build_code_args' => sub {
     my $next = shift;
     my $self = shift;
-    return ($self->_comm_handle->[1], $self->$next(@_));
+    return ($self->_comm_socket->[1], $self->$next(@_));
 };
 
 around '_build_args_to_init_run_instance' => sub {
