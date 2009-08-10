@@ -7,13 +7,14 @@ all_from 'lib/AnyEvent/Subprocess.pm';
 
 requires 'AnyEvent';
 requires 'AnyEventX::Cancel';
-requires 'Event::Join';
+requires 'Event::Join', '0.02';
+requires 'IO::Pty';
 requires 'Moose';
 requires 'namespace::clean';
+requires 'namespace::autoclean';
 
 test_requires 'Test::More';
 test_requires 'ok';
 
 auto_install;
 WriteAll;
-
