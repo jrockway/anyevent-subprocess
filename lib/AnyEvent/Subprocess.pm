@@ -4,7 +4,7 @@ with 'AnyEvent::Subprocess::Job', 'MooseX::Traits';
 
 our $VERSION = 0.01;
 
-use namespace::clean -except => 'meta';
+use namespace::autoclean;
 
 has '+_trait_namespace' => (
     default => 'AnyEvent::Subprocess::Job::Role',

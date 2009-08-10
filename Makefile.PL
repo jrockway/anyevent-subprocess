@@ -10,7 +10,6 @@ requires 'AnyEventX::Cancel';
 requires 'Event::Join', '0.02';
 requires 'IO::Pty';
 requires 'Moose';
-requires 'namespace::clean';
 requires 'namespace::autoclean';
 
 test_requires 'Test::More';

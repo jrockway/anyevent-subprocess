@@ -3,7 +3,7 @@ use Moose::Role;
 
 our $VERSION = '0.01';
 
-use namespace::clean -except => 'meta';
+use namespace::autoclean;
 
 use AnyEvent;
 use AnyEvent::Util; # portable socket/pipe
