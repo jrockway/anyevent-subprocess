@@ -15,6 +15,13 @@ has 'code' => (
     required => 1,
 );
 
+has 'cancel_loop' => (
+    is       => 'ro',
+    isa      => 'Bool',
+    default  => 1,
+    required => 1,
+);
+
 has 'before_fork_hook' => (
     is       => 'ro',
     isa      => 'CodeRef',
@@ -81,7 +88,10 @@ sub _build_args_to_init_run_instance {
 }
 
 sub _child_setup_hook {
-    cancel_all_watchers( warning => 0 );
+    my $self = shift;
+    cancel_all_watchers( warning => 0 )
+      if $self->cancel_loop;
+
     return;
 }
 
