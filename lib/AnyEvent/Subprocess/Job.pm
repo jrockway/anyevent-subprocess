@@ -72,15 +72,12 @@ sub _build_handle {
 sub _init_run_instance {
     my ($self) = @_;
     my $run = $self->run_class->new_with_traits(
-        $self->_build_args_to_init_run_instance,
+        $self->_build_run_initargs,
     );
     return $run;
 }
 
-# TODO: make these other _build_whatever things attributes, so that the
-# user can override later
-
-sub _build_args_to_init_run_instance {
+sub _build_run_initargs {
     my $self = shift;
     return (
         traits => $self->run_traits,
@@ -127,7 +124,7 @@ sub _run_parent {
     my $self = shift;
     my $run = shift;
 
-    $self->_parent_finalize_hook;
+    $self->_parent_finalize_hook($run);
 }
 
 sub _build_run {

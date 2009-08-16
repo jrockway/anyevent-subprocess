@@ -51,7 +51,7 @@ around '_build_run_traits' => sub {
     ];
 };
 
-around '_build_args_to_init_run_instance' => sub {
+around '_build_run_initargs' => sub {
     my ($orig, $self, @args) = @_;
     return (
         $self->$orig(@args),
