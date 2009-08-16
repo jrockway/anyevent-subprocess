@@ -96,4 +96,6 @@ sub kill {
     kill $signal, $self->child_pid; # BAI
 }
 
+sub BUILD {}
+
 1;

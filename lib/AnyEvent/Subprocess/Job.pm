@@ -41,7 +41,7 @@ has 'run_class' => (
 
 has 'run_traits' => (
     is         => 'ro',
-    isa        => 'ArrayRef[Str]',
+    isa        => 'ArrayRef[Str|HashRef]',
     lazy_build => 1,
 );
 

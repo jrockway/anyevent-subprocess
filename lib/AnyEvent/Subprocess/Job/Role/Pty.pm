@@ -45,7 +45,10 @@ sub _build_pty_handle {
 
 around '_build_run_traits' => sub {
     my ($next, $self, @args) = @_;
-    return [ @{$self->$next(@args)}, 'WithPty' ];
+    return [
+        @{$self->$next(@args)},
+        'WithHandle' => { name => 'pty', direction => 'rw' },
+    ];
 };
 
 around '_build_args_to_init_run_instance' => sub {

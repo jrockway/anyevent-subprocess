@@ -11,6 +11,7 @@ requires 'Event::Join', '0.02';
 requires 'IO::Pty';
 requires 'Moose';
 requires 'namespace::autoclean';
+requires 'MooseX::Traits', '0.07';
 
 test_requires 'Test::More';
 test_requires 'ok';
