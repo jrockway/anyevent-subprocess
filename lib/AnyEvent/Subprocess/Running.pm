@@ -76,6 +76,18 @@ sub _build_done_initargs {
     );
 }
 
+sub _completion_hook {
+    my ($self, %args) = @_;
+    my $status = $args{status};
+    
+    $self->completion_condvar->send(
+        AnyEvent::Subprocess::Done->new_with_traits(
+            $self->_build_done_initargs,
+            exit_status => $status,
+        ),
+    );
+}
+
 has 'child_event_joiner' => (
     is       => 'ro',
     isa      => 'Event::Join',
@@ -88,11 +100,9 @@ has 'child_event_joiner' => (
                 my $events = shift;
                 my $status = $events->{child};
 
-                $self->completion_condvar->send(
-                    AnyEvent::Subprocess::Done->new_with_traits(
-                        $self->_build_done_initargs,
-                        exit_status => $status,
-                    ),
+                $self->_completion_hook(
+                    events => $events,
+                    status => $events->{child},
                 );
 
                 $self->_finalize;
