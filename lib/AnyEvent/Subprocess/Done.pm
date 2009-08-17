@@ -1,5 +1,10 @@
 package AnyEvent::Subprocess::Done;
 use Moose;
+with 'MooseX::Traits';
+
+has '+_trait_namespace' => (
+    default => 'AnyEvent::Subprocess::Done::Role',
+);
 
 # $? is the exit_status, the argument to exit ("exit 0") is exit_value
 # if the process was killed, exit_signal contains the signal that killed it

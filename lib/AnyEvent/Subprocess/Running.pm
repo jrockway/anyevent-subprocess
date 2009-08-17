@@ -65,6 +65,17 @@ sub _finalize {
     return;
 }
 
+sub _build_done_traits {
+    return [];
+}
+
+sub _build_done_initargs {
+    my $self = shift;
+    return (
+        traits => $self->_build_done_traits,
+    );
+}
+
 has 'child_event_joiner' => (
     is       => 'ro',
     isa      => 'Event::Join',
@@ -78,7 +89,8 @@ has 'child_event_joiner' => (
                 my $status = $events->{child};
 
                 $self->completion_condvar->send(
-                    AnyEvent::Subprocess::Done->new(
+                    AnyEvent::Subprocess::Done->new_with_traits(
+                        $self->_build_done_initargs,
                         exit_status => $status,
                     ),
                 );
