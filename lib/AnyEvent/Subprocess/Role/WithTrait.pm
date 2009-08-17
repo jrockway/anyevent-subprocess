@@ -1,5 +1,11 @@
-package AnyEvent::Subprocess::Running::Role::WithDoneTrait;
+package AnyEvent::Subprocess::Role::WithTrait;
 use MooseX::Role::Parameterized;
+
+parameter 'type' => (
+    is       => 'ro',
+    isa      => 'Str',
+    required => 1,
+);
 
 parameter 'trait_name' => (
     is       => 'ro',
@@ -15,16 +21,23 @@ parameter 'trait_args' => (
 
 role {
     my $p = shift;
+    my $type = $p->type;
 
-    requires '_build_done_traits';
+    my $build_method = "_build_${type}_traits";
 
-    around _build_done_traits => sub {
+    requires $build_method;
+
+    around $build_method => sub {
         my ($next, $self, @args) = @_;
         return [
             @{$self->$next(@args)},
+
+            # this looks weird, but does work in both cases
             $p->trait_name => ($p->has_trait_args ? $p->trait_args : ()),
         ];
     };
 };
+
+
 
 1;

@@ -2,6 +2,7 @@ package AnyEvent::Subprocess::Job::Role::WithHandle;
 use AnyEvent;
 use AnyEvent::Util; # portable socket/pipendle;
 use AnyEvent::Subprocess::Handle;
+use AnyEvent::Subprocess::Role::WithTrait;
 
 use MooseX::Role::Parameterized;
 
@@ -9,8 +10,6 @@ use MooseX::Types::Moose qw(Str GlobRef ArrayRef);
 use AnyEvent::Subprocess::Types qw(Direction);
 
 use namespace::autoclean;
-
-use AnyEvent::Subprocess::Job::Role::WithRunTrait;
 
 parameter 'direction' => (
     is            => 'ro',
@@ -42,7 +41,8 @@ role {
     my $name = $p->name;
     my $direction = $p->direction;
 
-    with 'AnyEvent::Subprocess::Job::Role::WithRunTrait' => {
+    with 'AnyEvent::Subprocess::Role::WithTrait' => {
+        type       => 'run',
         trait_name => 'WithHandle',
         trait_args => { name => $name, direction => $direction },
     };

@@ -1,7 +1,7 @@
 package AnyEvent::Subprocess::Job::Role::CaptureHandle;
 use MooseX::Role::Parameterized;
 
-use AnyEvent::Subprocess::Job::Role::WithRunTrait;
+use AnyEvent::Subprocess::Role::WithTrait;
 
 parameter 'handle' => (
     is       => 'ro',
@@ -24,10 +24,11 @@ role {
     my $h = $p->handle;
     my $m = $p->handle_method;
 
-    with 'AnyEvent::Subprocess::Job::Role::WithRunTrait' => {
+    with 'AnyEvent::Subprocess::Role::WithTrait' => {
+        type       => 'run',
         trait_name => 'CaptureHandle',
         trait_args => {
-            handle_name   => $h,
+            handle_name => $h,
         },
     };
 

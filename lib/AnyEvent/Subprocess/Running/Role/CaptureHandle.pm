@@ -1,7 +1,7 @@
 package AnyEvent::Subprocess::Running::Role::CaptureHandle;
 use MooseX::Role::Parameterized;
 
-use AnyEvent::Subprocess::Running::Role::WithDoneTrait;
+use AnyEvent::Subprocess::Role::WithTrait;
 
 parameter 'handle_name' => (
     is       => 'ro',
@@ -13,7 +13,8 @@ role {
     my $p = shift;
     my $h = $p->handle_name;
 
-    with 'AnyEvent::Subprocess::Running::Role::WithDoneTrait' => {
+    with 'AnyEvent::Subprocess::Role::WithTrait' => {
+        type       => 'done',
         trait_name => 'CaptureHandle',
         trait_args => { handle_name => $p->handle_name },
     };
