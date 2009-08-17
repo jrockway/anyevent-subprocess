@@ -1,10 +1,9 @@
 use strict;
 use warnings;
-use Test::More tests => 10;
+use Test::More tests => 8;
 
 use ok 'AnyEvent::Subprocess';
 
-my $forked = 0;
 my $proc = AnyEvent::Subprocess->new_with_traits(
     traits => ['WithStandardHandles'],
     code   => sub {
@@ -16,18 +15,11 @@ my $proc = AnyEvent::Subprocess->new_with_traits(
         }
         warn "child is done";
     },
-    before_fork_hook => sub {
-        $forked = 1,
-    },
 );
 ok $proc;
 
-ok !$forked, 'no fork yet';
-
 my $run = $proc->run;
 isa_ok $run, 'AnyEvent::Subprocess::Running';
-
-ok $forked, 'before_fork callback called';
 
 my $condvar = $run->completion_condvar;
 ok $condvar, 'got condvar';

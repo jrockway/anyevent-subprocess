@@ -60,11 +60,6 @@ sub _build_child_events {
     return [qw/child/];
 }
 
-sub _finalize {
-    my $self = shift;
-    return;
-}
-
 sub _build_done_traits {
     return [];
 }
@@ -79,7 +74,7 @@ sub _build_done_initargs {
 sub _completion_hook {
     my ($self, %args) = @_;
     my $status = $args{status};
-    
+
     $self->completion_condvar->send(
         AnyEvent::Subprocess::Done->new_with_traits(
             $self->_build_done_initargs,
@@ -104,8 +99,6 @@ has 'child_event_joiner' => (
                     events => $events,
                     status => $events->{child},
                 );
-
-                $self->_finalize;
             }
         );
     },

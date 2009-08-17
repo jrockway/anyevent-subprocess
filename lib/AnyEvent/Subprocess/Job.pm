@@ -22,13 +22,6 @@ has 'cancel_loop' => (
     required => 1,
 );
 
-has 'before_fork_hook' => (
-    is       => 'ro',
-    isa      => 'CodeRef',
-    default  => sub { sub { } },
-    required => 1,
-);
-
 has 'run_class' => (
     is       => 'ro',
     isa      => 'ClassName',
@@ -38,14 +31,6 @@ has 'run_class' => (
         return 'AnyEvent::Subprocess::Running';
     },
 );
-
-has 'run_traits' => (
-    is         => 'ro',
-    isa        => 'ArrayRef[Str|HashRef]',
-    lazy_build => 1,
-);
-
-sub _build_run_traits { +[] }
 
 has 'run' => (
     is      => 'ro',
@@ -77,10 +62,12 @@ sub _init_run_instance {
     return $run;
 }
 
+sub _build_run_traits { +[] }
+
 sub _build_run_initargs {
     my $self = shift;
     return (
-        traits => $self->run_traits,
+        traits => $self->_build_run_traits,
     );
 }
 
@@ -99,11 +86,11 @@ sub _child_finalize_hook {
 sub _parent_setup_hook {
     my $self = shift;
     my $run = shift;
-    $self->before_fork_hook->($run);
     return;
 }
 
 sub _parent_finalize_hook {
+    my $self = shift;
     return;
 }
 
@@ -124,7 +111,7 @@ sub _run_parent {
     my $self = shift;
     my $run = shift;
 
-    $self->_parent_finalize_hook($run);
+    $self->_parent_finalize_hook;
 }
 
 sub _build_run {
