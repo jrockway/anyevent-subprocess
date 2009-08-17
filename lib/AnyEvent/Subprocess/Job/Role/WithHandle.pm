@@ -10,6 +10,7 @@ use AnyEvent::Subprocess::Types qw(Direction);
 
 use namespace::autoclean;
 
+use AnyEvent::Subprocess::Job::Role::WithRunTrait;
 
 parameter 'direction' => (
     is            => 'ro',
@@ -40,6 +41,11 @@ role {
     my $p = shift;
     my $name = $p->name;
     my $direction = $p->direction;
+
+    with 'AnyEvent::Subprocess::Job::Role::WithRunTrait' => {
+        trait_name => 'WithHandle',
+        trait_args => { name => $name, direction => $direction },
+    };
 
     my $pipe_method = "_${name}_pipes";
     has $pipe_method => (
@@ -81,14 +87,6 @@ role {
             _direction => $direction,
             _name      => "parent $name handle ($direction)",
         );
-    };
-
-    around '_build_run_traits' => sub {
-        my ($next, $self, @args) = @_;
-        return [
-            @{$self->$next(@args)},
-            'WithHandle', { name => $name, direction => $direction },
-        ];
     };
 
     around '_build_run_initargs' => sub {
