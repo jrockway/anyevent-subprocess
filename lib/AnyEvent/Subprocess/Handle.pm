@@ -12,7 +12,7 @@ sub new {
     my $is_write = 0;
     if(my $d = $args{_direction}){
         $is_read  = 1 if $d eq 'r' || $d eq 'rw';
-        $is_write = 1 if $d eq 'w' || $d eq 'w';
+        $is_write = 1 if $d eq 'w' || $d eq 'rw';
     }
 
     my $cv = AnyEvent->condvar;
