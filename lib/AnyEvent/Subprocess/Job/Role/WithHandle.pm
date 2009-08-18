@@ -6,7 +6,7 @@ use AnyEvent::Subprocess::Role::WithTrait;
 
 use MooseX::Role::Parameterized;
 
-use MooseX::Types::Moose qw(Str GlobRef ArrayRef);
+use MooseX::Types::Moose qw(Str Int GlobRef ArrayRef);
 use AnyEvent::Subprocess::Types qw(Direction);
 
 use POSIX qw(dup2);
@@ -26,10 +26,10 @@ parameter 'name' => (
     required => 1,
 );
 
-parameter 'replace_handle' => (
+parameter 'replace' => (
     is        => 'ro',
-    isa       => GlobRef,
-    predicate => 'has_replace_handle',
+    isa       => GlobRef|Int,
+    predicate => 'has_replace',
 );
 
 role {
@@ -40,8 +40,8 @@ role {
 
     # I am not sure this is true anymore; let the user decide :)
     #
-    # confess 'supplying "replace_handle" does not make sense with "rw" direction'
-    #   if $direction eq 'rw' && $p->replace_handle;
+    # confess 'supplying "replace" does not make sense with "rw" direction'
+    #   if $direction eq 'rw' && $p->replace;
 
     with 'AnyEvent::Subprocess::Role::WithTrait' => {
         type       => 'run',
@@ -115,9 +115,13 @@ role {
 
         my $ch = $self->$pipe_method->[1];
 
-        if($p->has_replace_handle){
-            dup2( fileno($ch), fileno($p->replace_handle) )
-              or confess "failed to dup $name to ". fileno($p->replace_handle) .": $!";
+        if($p->has_replace){
+            my $replacement = ref $p->replace ?
+              fileno($p->replace) :
+              $p->replace;
+
+            dup2( fileno($ch), $replacement )
+              or confess "failed to dup $name to $replacement: $!";
         }
 
         AnyEvent::Util::fh_nonblocking $ch, 0;
