@@ -9,6 +9,8 @@ use MooseX::Role::Parameterized;
 use MooseX::Types::Moose qw(Str GlobRef ArrayRef);
 use AnyEvent::Subprocess::Types qw(Direction);
 
+use POSIX qw(dup2);
+
 use namespace::autoclean;
 
 parameter 'direction' => (
@@ -30,16 +32,16 @@ parameter 'replace_handle' => (
     predicate => 'has_replace_handle',
 );
 
-# sub BUILD {
-#     my $self = shift;
-#     confess 'supplying "replace_handle" does not make sense with "rw" direction'
-#       if $self->direction eq 'rw' && $self->replace_handle;
-# }
-
 role {
     my $p = shift;
+
     my $name = $p->name;
     my $direction = $p->direction;
+
+    # I am not sure this is true anymore; let the user decide :)
+    #
+    # confess 'supplying "replace_handle" does not make sense with "rw" direction'
+    #   if $direction eq 'rw' && $p->replace_handle;
 
     with 'AnyEvent::Subprocess::Role::WithTrait' => {
         type       => 'run',
@@ -106,6 +108,7 @@ role {
     before '_child_setup_hook' => sub {
         my $self = shift;
 
+        my $name = $self->$handle_attrname->name;
         $self->$handle_attrname->do_not_want; # DO NOT WANT (in child)
 
         # reopen fake fds to the "real" ones
@@ -113,11 +116,8 @@ role {
         my $ch = $self->$pipe_method->[1];
 
         if($p->has_replace_handle){
-            my $dir = ($direction eq 'r') ? '>' : '<'; # reverse because we are in child
-            open $p->replace_handle, "$dir&=". fileno($ch)
-              or confess "failed to reopen $name for $dir: $!";
-
-            *{$p->replace_handle} = $ch;
+            dup2( fileno($ch), fileno($p->replace_handle) )
+              or confess "failed to dup $name to ". fileno($p->replace_handle) .": $!";
         }
 
         AnyEvent::Util::fh_nonblocking $ch, 0;
