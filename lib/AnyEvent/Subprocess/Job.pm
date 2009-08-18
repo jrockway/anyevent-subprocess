@@ -32,13 +32,6 @@ has 'run_class' => (
     },
 );
 
-has 'run' => (
-    is      => 'ro',
-    isa     => 'AnyEvent::Subprocess::Running',
-    lazy    => 1,
-    builder => '_build_run',
-);
-
 has 'handle_class' => (
     is       => 'ro',
     isa      => 'ClassName',
@@ -114,7 +107,7 @@ sub _run_parent {
     $self->_parent_finalize_hook;
 }
 
-sub _build_run {
+sub run {
     my $self = shift;
 
     my $run = $self->_init_run_instance;
