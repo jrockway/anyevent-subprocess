@@ -49,6 +49,16 @@ has 'run_delegate_class' => (
     },
 );
 
+has 'redirect_handles' => (
+    is         => 'ro',
+    isa        => 'ArrayRef[GlobRef]',
+    auto_deref => 1,
+    required   => 1,
+    default    => sub {
+        return [\*STDIN, \*STDOUT],
+    },
+);
+
 sub _build_pty {
     return IO::Pty->new;
 }
@@ -90,9 +100,10 @@ sub child_setup_hook {
 
     AnyEvent::Util::fh_nonblocking $self->slave_pty, 0;
 
-    dup2( fileno($self->slave_pty), fileno(\*STDIN) ) or confess $!;
-    dup2( fileno($self->slave_pty), fileno(\*STDOUT) ) or confess $!;
-    dup2( fileno($self->slave_pty), fileno(\*STDERR) ) or confess $!;
+    for my $fh ($self->redirect_handles){
+        dup2( fileno($self->slave_pty), fileno($fh) )
+          or confess "Can't dup2 $fh to slave pty: $!";
+    }
 }
 
 sub build_code_args {}

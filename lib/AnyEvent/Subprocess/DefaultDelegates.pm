@@ -49,6 +49,14 @@ register_delegate( 'Pty' => sub {
     my $args = shift || {};
     $args->{name} ||= 'pty';
 
+    if(delete $args->{stderr}){
+        $args->{redirect_handles} = [
+            \*STDIN,
+            \*STDOUT,
+            \*STDERR,
+        ];
+    }
+
     return AnyEvent::Subprocess::Job::Delegate::Pty->new(%$args);
 });
 
