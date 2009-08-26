@@ -4,9 +4,14 @@ use warnings;
 
 use AnyEvent::Subprocess::Role::WithDelegates::Manager qw(register_delegate);
 
-use AnyEvent::Subprocess::Job::Delegate::Handle;
+use AnyEvent::Subprocess::Job::Delegate::Callback;
 use AnyEvent::Subprocess::Job::Delegate::CaptureHandle;
+use AnyEvent::Subprocess::Job::Delegate::Handle;
 use AnyEvent::Subprocess::Job::Delegate::Pty;
+
+register_delegate( 'Callback' => 'AnyEvent::Subprocess::Job::Delegate::Callback' );
+register_delegate( 'Capture' => 'AnyEvent::Subprocess::Job::Delegate::CaptureHandle' );
+register_delegate( 'Handle' => 'AnyEvent::Subprocess::Job::Delegate::Handle' );
 
 register_delegate( 'StandardHandles' => sub {
     my $args = shift || {};
@@ -43,8 +48,6 @@ register_delegate( 'CommHandle' => sub {
     );
 });
 
-register_delegate( 'Handle' => 'AnyEvent::Subprocess::Job::Delegate::Handle' );
-register_delegate( 'Capture' => 'AnyEvent::Subprocess::Job::Delegate::CaptureHandle' );
 register_delegate( 'Pty' => sub {
     my $args = shift || {};
     $args->{name} ||= 'pty';

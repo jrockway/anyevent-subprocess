@@ -3,7 +3,6 @@ use warnings;
 use Test::More tests => 5;
 
 use AnyEvent::Subprocess;
-use AnyEvent::Subprocess::Job::Delegate::Callback;
 
 my $is_done = 0;
 
@@ -14,7 +13,7 @@ my $s = AnyEvent::Subprocess->new(
     },
     delegates => [
         'StandardHandles',
-        AnyEvent::Subprocess::Job::Delegate::Callback->new(
+        { Callback => {
             name             => 'callback',
             child_setup_hook => sub {
                 our $FOO = 123;
@@ -32,7 +31,7 @@ my $s = AnyEvent::Subprocess->new(
             completion_hook => sub {
                 ok !$is_done, 'completion_hook ran before completion_condvar was sent';
             },
-        ),
+        }},
     ],
 );
 
