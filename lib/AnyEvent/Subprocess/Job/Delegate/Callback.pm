@@ -1,6 +1,7 @@
 package AnyEvent::Subprocess::Job::Delegate::Callback;
 use AnyEvent::Subprocess::Running::Delegate::Callback;
 use Moose;
+use MooseX::StrictConstructor;
 
 with 'AnyEvent::Subprocess::Job::Delegate';
 
