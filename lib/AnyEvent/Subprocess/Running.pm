@@ -1,15 +1,15 @@
 package AnyEvent::Subprocess::Running;
 use Moose;
 use MooseX::AttributeHelpers;
-use AnyEvent;
-use AnyEvent::Subprocess::Done;
 use Event::Join;
 
-with 'MooseX::Traits';
+use AnyEvent;
+use AnyEvent::Subprocess::Done;
+use AnyEvent::Subprocess::Types qw(RunDelegate);
 
-has '+_trait_namespace' => (
-    default => 'AnyEvent::Subprocess::Running::Role',
-);
+with 'AnyEvent::Subprocess::Role::WithDelegates' => {
+    type => RunDelegate,
+};
 
 # we have to set this "later"
 has 'child_pid' => (
@@ -57,39 +57,16 @@ has 'child_events' => (
 
 sub _build_child_events {
     my $self = shift;
-    return [qw/child/];
-}
-
-sub _build_done_traits {
-    return [];
-}
-
-sub _build_done_initargs {
-    my $self = shift;
-    return (
-        traits => $self->_build_done_traits,
-    );
-}
-
-sub _completion_hook {
-    my ($self, %args) = @_;
-    my $status = $args{status};
-
-    $self->completion_condvar->send(
-        AnyEvent::Subprocess::Done->new_with_traits(
-            $self->_build_done_initargs,
-            exit_status => $status,
-        ),
-    );
+    return [qw/child/, $self->_invoke_delegates('build_events')];
 }
 
 has 'child_event_joiner' => (
     is       => 'ro',
     isa      => 'Event::Join',
-    required => 1,
+    lazy     => 1,
     default  => sub {
         my $self = shift;
-        return Event::Join->new(
+        my $joiner = Event::Join->new(
             events        => $self->child_events,
             on_completion => sub {
                 my $events = shift;
@@ -97,12 +74,33 @@ has 'child_event_joiner' => (
 
                 $self->_completion_hook(
                     events => $events,
-                    status => $events->{child},
+                    status => $status,
                 );
             }
         );
+
+        for my $d ($self->_delegates){
+            my %events = map { $_ => $joiner->event_sender_for($_) } $d->build_events;
+            $d->event_senders(\%events);
+        }
+
+        return $joiner;
     },
 );
+
+sub _completion_hook {
+    my ($self, %args) = @_;
+    my $status = $args{status};
+
+    $self->_invoke_delegates('completion_hook', \%args);
+
+    $self->completion_condvar->send(
+        AnyEvent::Subprocess::Done->new(
+            delegates   => [$self->_invoke_delegates('build_done_delegates')],
+            exit_status => $status,
+        ),
+    );
+}
 
 sub kill {
     my $self = shift;
@@ -111,6 +109,9 @@ sub kill {
     kill $signal, $self->child_pid; # BAI
 }
 
-sub BUILD {}
+sub BUILD {
+    my $self = shift;
+    $self->child_event_joiner; # vivify
+}
 
 1;

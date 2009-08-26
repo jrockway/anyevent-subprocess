@@ -1,13 +1,18 @@
 package AnyEvent::Subprocess::Job;
-use Moose::Role;
-
-our $VERSION = '0.01';
-
-use namespace::autoclean;
 
 use AnyEvent;
 use AnyEvent::Util; # portable socket/pipe
 use AnyEventX::Cancel qw(cancel_all_watchers);
+use AnyEvent::Subprocess::Types qw(JobDelegate);
+use namespace::autoclean;
+
+our $VERSION = '0.01';
+
+use Moose::Role;
+
+with 'AnyEvent::Subprocess::Role::WithDelegates' => {
+    type => JobDelegate,
+};
 
 has 'code' => (
     is       => 'ro',
@@ -32,36 +37,23 @@ has 'run_class' => (
     },
 );
 
-has 'handle_class' => (
-    is       => 'ro',
-    isa      => 'ClassName',
-    required => 1,
-    default  => sub {
-        require AnyEvent::Subprocess::Handle;
-        return 'AnyEvent::Subprocess::Handle';
-    },
+has 'run' => (
+    is      => 'ro',
+    lazy    => 1,
+    builder => '_build_run',
 );
-
-sub _build_handle {
-    my ($self, $fh, @rest) = @_;
-    return $self->handle_class->new( fh => $fh, @rest );
-}
 
 sub _init_run_instance {
     my ($self) = @_;
-    my $run = $self->run_class->new_with_traits(
-        $self->_build_run_initargs,
+    my $run = $self->run_class->new(
+        delegates => [$self->_build_run_delegates],
     );
     return $run;
 }
 
-sub _build_run_traits { +[] }
-
-sub _build_run_initargs {
+sub _build_run_delegates {
     my $self = shift;
-    return (
-        traits => $self->_build_run_traits,
-    );
+    return $self->_invoke_delegates('build_run_delegates');
 }
 
 sub _child_setup_hook {
@@ -69,45 +61,43 @@ sub _child_setup_hook {
     cancel_all_watchers( warning => 0 )
       if $self->cancel_loop;
 
+    $self->_invoke_delegates('child_setup_hook');
     return;
 }
 
 sub _child_finalize_hook {
+    my $self = shift;
+    $self->_invoke_delegates('child_finalize_hook');
     exit 0;
 }
 
 sub _parent_setup_hook {
     my $self = shift;
     my $run = shift;
+    $self->_invoke_delegates('parent_setup_hook', $run);
     return;
 }
 
 sub _parent_finalize_hook {
     my $self = shift;
+    $self->_invoke_delegates('parent_finalize_hook');
     return;
 }
 
 sub _build_code_args {
     my $self = shift;
-    return;
+    return $self->_invoke_delegates('build_code_args');
 }
 
 sub _run_child {
     my $self = shift;
 
     $self->_child_setup_hook;
-    $self->code->($self->_build_code_args);
+    $self->code->({$self->_build_code_args});
     return $self->_child_finalize_hook;
 }
 
-sub _run_parent {
-    my $self = shift;
-    my $run = shift;
-
-    $self->_parent_finalize_hook;
-}
-
-sub run {
+sub _build_run {
     my $self = shift;
 
     my $run = $self->_init_run_instance;
@@ -121,7 +111,7 @@ sub run {
     }
 
     $run->child_pid($child_pid);
-    $self->_run_parent($run);
+    $self->_parent_finalize_hook;
 
     return $run;
 }

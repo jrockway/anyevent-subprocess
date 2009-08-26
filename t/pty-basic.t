@@ -4,10 +4,11 @@ use Test::More tests => 6;
 
 use AnyEvent::Subprocess;
 
-my $proc = AnyEvent::Subprocess->new_with_traits(
-    traits => ['Pty', 'WithCommHandle'],
-    code   => sub {
-        my $comm = shift;
+my $proc = AnyEvent::Subprocess->new(
+    delegates => [ 'Pty', 'CommHandle' ],
+    code => sub {
+        my $args = shift;
+        my $comm = $args->{comm};
         local $| = 1;
         print "Hello, parent!\n";
         while(my $line = <STDIN>){
@@ -32,27 +33,27 @@ my $joiner = Event::Join->new(
 
 $run->completion_condvar->cb( $joiner->event_sender_for( 'exited' ) );
 
-$run->pty_handle->push_read( line => sub {
+$run->delegate('pty')->handle->push_read( line => sub {
     my ($h, $line, $eol) = @_;
     is $line, 'Hello, parent!', 'got initial output';
     $joiner->send_event( 'initial_output' );
 } );
 
-$run->pty_handle->push_read( line => sub {
+$run->delegate('pty')->handle->push_read( line => sub {
     my ($h, $line, $eol) = @_;
     is $line, 'this is a test', 'echoed input';
     $joiner->send_event( 'echoed_input' );
-    close $run->pty_handle->fh;
+    close $run->delegate('pty')->handle->fh;
 } );
 
-$run->comm_handle->push_read( line => sub {
+$run->delegate('comm')->handle->push_read( line => sub {
     my ($h, $line, $eol) = @_;
     is $line, 'got line: {this is a test}', 'process got input and cooked it';
     $joiner->send_event( 'cooked_input' );
-    close $run->comm_handle->fh;
+    close $run->delegate('comm')->handle->fh;
 } );
 
-$run->pty_handle->push_write( "this is a test\n" );
+$run->delegate('pty')->handle->push_write( "this is a test\n" );
 
 my $done = $completion_condvar->recv();
 isa_ok $done, 'AnyEvent::Subprocess::Done';

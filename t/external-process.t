@@ -4,9 +4,9 @@ use Test::More tests => 4;
 
 use AnyEvent::Subprocess;
 
-my $proc = AnyEvent::Subprocess->new_with_traits(
-    traits => ['WithStandardHandles'],
-    code   => sub {
+my $proc = AnyEvent::Subprocess->new(
+    delegates => [ 'StandardHandles' ],
+    code      => sub {
         exec 'date';
     },
 );
@@ -17,9 +17,9 @@ my $condvar = $run->completion_condvar;
 
 my $got_error = 0;
 
-$run->stderr_handle->on_read( sub { $got_error++ } );
+$run->delegate('stderr')->handle->on_read( sub { warn @_; warn $_[0]->rbuf; $got_error++ } );
 
-$run->stdout_handle->push_read( line => sub {
+$run->delegate('stdout')->handle->push_read( line => sub {
     my ($h, $data) = @_;
     ok length $data > 5, 'got some value from `date`';
 });

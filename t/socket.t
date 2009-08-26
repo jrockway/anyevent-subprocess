@@ -4,11 +4,13 @@ use Test::More tests => 2;
 
 use AnyEvent::Subprocess;
 
-my $proc = AnyEvent::Subprocess->new_with_traits(
-    traits => ['WithCommHandle'],
-    code   => sub {
+my $proc = AnyEvent::Subprocess->new(
+    delegates => [ 'CommHandle' ],
+    code      => sub {
+        my $args = shift;
+        my $socket = $args->{comm};
+
         my $done = AnyEvent->condvar;
-        my $socket = shift;
         my $handle = AnyEvent::Handle->new( fh => $socket );
         $handle->push_read( json => sub {
             my ($handle, $obj) = @_;
@@ -26,14 +28,14 @@ my $run = $proc->run;
 
 my $complete = $run->completion_condvar;
 
-$run->comm_handle->push_write( json => {
+$run->delegate('comm')->handle->push_write( json => {
     cmd => 'echo',
     msg => 'hello my child',
 });
 
 my $got_response = AnyEvent->condvar;
 
-$run->comm_handle->push_read( json => sub {
+$run->delegate('comm')->handle->push_read( json => sub {
     my ($handle, $obj) = @_;
     $got_response->send( $obj->{msg} );
 });

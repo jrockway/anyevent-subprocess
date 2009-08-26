@@ -1,13 +1,11 @@
 package AnyEvent::Subprocess;
 use Moose;
-with 'AnyEvent::Subprocess::Job', 'MooseX::Traits';
+with 'AnyEvent::Subprocess::Job';
 
 our $VERSION = 0.01;
 
-use namespace::autoclean;
+use AnyEvent::Subprocess::DefaultDelegates;
 
-has '+_trait_namespace' => (
-    default => 'AnyEvent::Subprocess::Job::Role',
-);
+use namespace::autoclean;
 
 1;
