@@ -7,7 +7,8 @@ use Test::More tests => 7;
 my $b = Test::Builder->new;
 
 my $job = AnyEvent::Subprocess->new(
-    code => sub {
+    delegates => ['CompletionCondvar'],
+    code      => sub {
         pass 'child started running';
         sleep 2;
 
@@ -28,7 +29,7 @@ $b->current_test( $b->current_test() + 1 );
 
 ok $run, 'got run';
 
-my $exit = $run->completion_condvar->recv;
+my $exit = $run->delegate('completion_condvar')->recv;
 my $end_time = time;
 
 $b->current_test( $b->current_test() + 1 );

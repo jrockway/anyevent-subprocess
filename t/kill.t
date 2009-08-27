@@ -5,7 +5,7 @@ use Test::More tests => 4;
 use AnyEvent::Subprocess;
 
 my $proc = AnyEvent::Subprocess->new(
-    delegates => ['CommHandle'],
+    delegates => ['CommHandle', 'CompletionCondvar'],
     code      => sub {
         my $args = shift;
         my $socket = $args->{comm};
@@ -19,7 +19,7 @@ my $proc = AnyEvent::Subprocess->new(
 ok $proc;
 
 my $run = $proc->run;
-my $condvar = $run->completion_condvar;
+my $condvar = $run->delegate('completion_condvar');
 
 $run->delegate('comm')->handle->push_read( line => sub {
     my (undef, $line) = @_;

@@ -6,6 +6,7 @@ use AnyEvent::Subprocess;
 
 my $proc = AnyEvent::Subprocess->new(
     delegates => [
+        'CompletionCondvar',
         'StandardHandles',
         { Handle => {
             name      => 'extra_in',
@@ -46,7 +47,7 @@ my $proc = AnyEvent::Subprocess->new(
 ok $proc;
 
 my $run = $proc->run;
-my $condvar = $run->completion_condvar;
+my $condvar = $run->delegate('completion_condvar');
 
 $run->delegate('stdin')->handle->push_write("stdin\n");
 $run->delegate('extra_in')->handle->push_write("extra_in\n");

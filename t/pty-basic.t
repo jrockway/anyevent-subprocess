@@ -3,10 +3,21 @@ use warnings;
 use Test::More tests => 6;
 
 use AnyEvent::Subprocess;
+use Event::Join;
+
+my $completion_condvar = AnyEvent->condvar;
+my $joiner = Event::Join->new(
+    events => [qw/exited initial_output echoed_input cooked_input/],
+    on_completion => sub {
+        my $events = shift;
+        return $completion_condvar->send( $events->{exited} );
+    },
+);
 
 my $proc = AnyEvent::Subprocess->new(
-    delegates => [ 'Pty', 'CommHandle' ],
-    code => sub {
+    delegates     => [ 'Pty', 'CommHandle' ],
+    on_completion => $joiner->event_sender_for('exited'),
+    code          => sub {
         my $args = shift;
         my $comm = $args->{comm};
         local $| = 1;
@@ -21,18 +32,6 @@ my $proc = AnyEvent::Subprocess->new(
 ok $proc;
 
 my $run = $proc->run;
-
-my $completion_condvar = AnyEvent->condvar;
-my $joiner = Event::Join->new(
-    events => [qw/exited initial_output echoed_input cooked_input/],
-    on_completion => sub {
-        my $events = shift;
-        return $completion_condvar->send( $events->{exited}->recv );
-    },
-);
-
-$run->completion_condvar->cb( $joiner->event_sender_for( 'exited' ) );
-
 $run->delegate('pty')->handle->push_read( line => sub {
     my ($h, $line, $eol) = @_;
     is $line, 'Hello, parent!', 'got initial output';

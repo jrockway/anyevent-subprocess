@@ -5,7 +5,7 @@ use Test::More tests => 4;
 use AnyEvent::Subprocess;
 
 my $proc = AnyEvent::Subprocess->new(
-    delegates => [ 'StandardHandles' ],
+    delegates => [ 'StandardHandles', 'CompletionCondvar' ],
     code      => sub {
         exec 'date';
     },
@@ -13,7 +13,7 @@ my $proc = AnyEvent::Subprocess->new(
 ok $proc;
 
 my $run = $proc->run;
-my $condvar = $run->completion_condvar;
+my $condvar = $run->delegate('completion_condvar');
 
 my $got_error = 0;
 

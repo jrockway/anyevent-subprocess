@@ -1,0 +1,20 @@
+package AnyEvent::Subprocess::Job::Delegate::CompletionCondvar;
+use AnyEvent::Subprocess::Running::Delegate::CompletionCondvar;
+use Moose;
+
+with 'AnyEvent::Subprocess::Job::Delegate';
+
+sub build_run_delegates {
+    my $self = shift;
+    return AnyEvent::Subprocess::Running::Delegate::CompletionCondvar->new(
+          name => $self->name,
+      );
+}
+
+sub child_setup_hook {}
+sub child_finalize_hook {}
+sub parent_setup_hook {}
+sub parent_finalize_hook {}
+sub build_code_args {}
+
+1;

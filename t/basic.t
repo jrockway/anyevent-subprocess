@@ -5,7 +5,7 @@ use Test::More tests => 8;
 use ok 'AnyEvent::Subprocess';
 
 my $proc = AnyEvent::Subprocess->new(
-    delegates => ['StandardHandles'],
+    delegates => ['StandardHandles', 'CompletionCondvar'],
     code      => sub {
         warn "starting child";
 
@@ -21,7 +21,7 @@ ok $proc;
 my $run = $proc->run;
 isa_ok $run, 'AnyEvent::Subprocess::Running';
 
-my $condvar = $run->completion_condvar;
+my $condvar = $run->delegate('completion_condvar')->condvar;
 ok $condvar, 'got condvar';
 
 my $line = "here is a line for the kid";

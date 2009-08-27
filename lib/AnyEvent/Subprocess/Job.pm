@@ -20,6 +20,12 @@ has 'code' => (
     required => 1,
 );
 
+has 'on_completion' => (
+    is        => 'ro',
+    isa       => 'CodeRef',
+    predicate => '_has_on_completion',
+);
+
 has 'cancel_loop' => (
     is       => 'ro',
     isa      => 'Bool',
@@ -47,6 +53,7 @@ sub _init_run_instance {
     my ($self) = @_;
     my $run = $self->run_class->new(
         delegates => [$self->_build_run_delegates],
+        ($self->_has_on_completion) ? (on_completion => $self->on_completion) : ()
     );
     return $run;
 }

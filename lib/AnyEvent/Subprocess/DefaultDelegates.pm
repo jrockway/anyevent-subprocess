@@ -6,6 +6,7 @@ use AnyEvent::Subprocess::Role::WithDelegates::Manager qw(register_delegate);
 
 use AnyEvent::Subprocess::Job::Delegate::Callback;
 use AnyEvent::Subprocess::Job::Delegate::CaptureHandle;
+use AnyEvent::Subprocess::Job::Delegate::CompletionCondvar;
 use AnyEvent::Subprocess::Job::Delegate::Handle;
 use AnyEvent::Subprocess::Job::Delegate::Pty;
 
@@ -61,6 +62,13 @@ register_delegate( 'Pty' => sub {
     }
 
     return AnyEvent::Subprocess::Job::Delegate::Pty->new(%$args);
+});
+
+register_delegate( 'CompletionCondvar' => sub {
+    my $args = shift || {};
+    $args->{name} ||= 'completion_condvar';
+
+    return AnyEvent::Subprocess::Job::Delegate::CompletionCondvar->new(%$args);
 });
 
 1;

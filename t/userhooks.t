@@ -12,6 +12,7 @@ my $s = AnyEvent::Subprocess->new(
         print "OH HAI $FOO";
     },
     delegates => [
+        'CompletionCondvar',
         'StandardHandles',
         { Callback => {
             name             => 'callback',
@@ -36,7 +37,7 @@ my $s = AnyEvent::Subprocess->new(
 );
 
 my $run = $s->run;
-my $done = $run->completion_condvar->recv;
+my $done = $run->delegate('completion_condvar')->recv;
 $is_done = 1;
 
 my $out = $run->delegate('stdout')->handle->{rbuf};

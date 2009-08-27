@@ -40,12 +40,11 @@ has 'child_listener' => (
     }
 );
 
-has 'completion_condvar' => (
-    is      => 'ro',
-    isa     => 'AnyEvent::CondVar',
-    default => sub {
-        AnyEvent->condvar,
-    },
+has 'on_completion' => (
+    is       => 'ro',
+    isa      => 'CodeRef',
+    default  => sub { sub {} },
+    required => 1,
 );
 
 has 'child_events' => (
@@ -92,14 +91,14 @@ sub _completion_hook {
     my ($self, %args) = @_;
     my $status = $args{status};
 
-    $self->_invoke_delegates('completion_hook', \%args);
-
-    $self->completion_condvar->send(
-        AnyEvent::Subprocess::Done->new(
-            delegates   => [$self->_invoke_delegates('build_done_delegates')],
-            exit_status => $status,
-        ),
+    my $done = AnyEvent::Subprocess::Done->new(
+        delegates   => [$self->_invoke_delegates('build_done_delegates')],
+        exit_status => $status,
     );
+
+    $args{done} = $done;
+    $self->_invoke_delegates('completion_hook', \%args);
+    $self->on_completion->($done);
 }
 
 sub kill {
