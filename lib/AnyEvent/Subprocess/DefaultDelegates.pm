@@ -1,6 +1,7 @@
 package AnyEvent::Subprocess::DefaultDelegates;
 use strict;
 use warnings;
+use Carp qw(confess);
 
 use AnyEvent::Subprocess::Role::WithDelegates::Manager qw(register_delegate);
 
@@ -10,7 +11,6 @@ use AnyEvent::Subprocess::Job::Delegate::CompletionCondvar;
 use AnyEvent::Subprocess::Job::Delegate::Handle;
 use AnyEvent::Subprocess::Job::Delegate::Pty;
 
-register_delegate( 'Capture' => 'AnyEvent::Subprocess::Job::Delegate::CaptureHandle' );
 register_delegate( 'Handle' => 'AnyEvent::Subprocess::Job::Delegate::Handle' );
 
 register_delegate( 'StandardHandles' => sub {
@@ -76,4 +76,13 @@ register_delegate( 'Callback' => sub {
 
     return AnyEvent::Subprocess::Job::Delegate::Callback->new(%$args);
 });
+
+register_delegate( 'Capture' => sub {
+    my $args = shift || {};
+    confess 'need handle' unless $args->{handle};
+    $args->{name} ||= $args->{handle} . '_capture';
+
+    return AnyEvent::Subprocess::Job::Delegate::CaptureHandle->new(%$args);
+});
+
 1;

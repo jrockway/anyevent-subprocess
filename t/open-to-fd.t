@@ -18,14 +18,8 @@ my $proc = AnyEvent::Subprocess->new(
             direction => 'r',
             replace   => 4,
         }},
-        { Capture => {
-            name   => 'stdout_capture',
-            handle => 'stdout',
-        }},
-        { Capture => {
-            name   => 'stderr_capture',
-            handle => 'stderr',
-        }},
+        { Capture => { handle => 'stdout' }},
+        { Capture => { handle => 'stderr' }},
         { Capture => {
             name   => 'extra_capture',
             handle => 'extra_out',
