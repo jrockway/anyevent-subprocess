@@ -15,7 +15,6 @@ my $s = AnyEvent::Subprocess->new(
         'CompletionCondvar',
         'StandardHandles',
         { Callback => {
-            name             => 'callback',
             child_setup_hook => sub {
                 our $FOO = 123;
             },
