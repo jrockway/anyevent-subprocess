@@ -26,11 +26,9 @@ ok $condvar, 'got condvar';
 
 my $line = "here is a line for the kid";
 $run->delegate('stdin')->handle->push_write($line. "\n");
-close $run->delegate('stdin')->handle->fh;
-
-# $run->stdout_handle->push_read( line => sub {
-#     warn "@_";
-# });
+$run->delegate('stdin')->handle->on_drain(sub{
+    $_[0]->close_fh;
+});
 
 my $done = $condvar->recv;
 isa_ok $done, 'AnyEvent::Subprocess::Done';

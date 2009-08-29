@@ -65,6 +65,7 @@ sub _build_run_delegates {
 
 sub _child_setup_hook {
     my $self = shift;
+
     cancel_all_watchers( warning => 0 )
       if $self->cancel_loop;
 
