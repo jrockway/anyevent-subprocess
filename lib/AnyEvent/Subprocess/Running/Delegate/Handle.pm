@@ -32,13 +32,15 @@ sub build_events {
 }
 
 sub build_done_delegates {}
-sub completion_hook {} # destroy handle?
+sub completion_hook      {} # destroy handle?
 
 sub BUILD {
     my ($self) = @_;
 
+    # todo: we should check "rw" also, but there is not a good way to
+    # do this
     if($self->direction eq 'r'){
-        $self->handle->eof_condvar->cb(
+        $self->handle->on_finalize(
             $self->event_sender_for($self->name),
         );
     }

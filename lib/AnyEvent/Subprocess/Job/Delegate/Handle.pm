@@ -104,7 +104,6 @@ sub _build_handle {
 
 sub build_run_delegates {
     my $self = shift;
-    my $name = $self->name;
     return $self->run_delegate_class->new(
         name      => $self->name,
         direction => $self->direction,

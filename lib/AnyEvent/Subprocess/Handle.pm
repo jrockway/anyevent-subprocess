@@ -15,23 +15,42 @@ sub new {
         $is_write = 1 if $d eq 'w' || $d eq 'rw';
     }
 
-    my $cv = AnyEvent->condvar;
     my $send = sub {
-        my ($handle) = @_;
-        # warn "error: $$ @_ ($!) -- ". $handle->name;
-        $cv->send(1);
+        my $handle = shift;
+        # warn "handle error: $$ @_ ($!) -- ". $handle->name
+        #   if $ENV{PERL_ANYEVENT_VERBOSE} && @_;
+
+        $handle->_do_finalize;
         return 0;
     };
 
     push @args, on_error => $send, on_eof => $send;
 
     # if the on_read is not provided, we never get notified of handle
-    # close
+    # close (presumably because no watchers are ever created)
     push @args, on_read => sub { } if $is_read;
 
     my $self = $class->SUPER::new(@args);
-    $self->{_eof_condvar} = $cv;
+
     return $self;
+}
+
+sub on_finalize {
+    my ($self, $cb) = @_;
+    $self->{__on_finalize} = $cb if $cb;
+
+    if($cb && $self->{destroyed} && !$self->{finalized}){
+        $cb->($self);
+    }
+
+    return $self->{__on_finalize} || sub { };
+}
+
+sub _do_finalize {
+    my ($self) = @_;
+    return if $self->{finalized}++;
+    $self->_drain_rbuf;
+    $self->on_finalize->();
 }
 
 sub name {
@@ -48,11 +67,11 @@ sub do_not_want {
 sub destroy {
     my ($self, @args) = @_;
     my $rbuf = $self->{rbuf};
+    $self->_do_finalize;
     $self->SUPER::destroy(@args);
     $self->{rbuf} = $rbuf;
+    $self->{destroyed} = 1;
     return;
 }
-
-sub eof_condvar { shift->{_eof_condvar} }
 
 1;
