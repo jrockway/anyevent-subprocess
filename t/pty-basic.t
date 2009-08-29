@@ -22,11 +22,15 @@ my $proc = AnyEvent::Subprocess->new(
         my $comm = $args->{comm};
         local $| = 1;
         print "Hello, parent!\n";
+
         while(my $line = <STDIN>){
             chomp $line;
             print {$comm} "got line: {$line}\n";
+
+            # XXX: I think this is weird. readline just blocks, even
+            # after the tty is closed / shutdown.
+            exit 0;
         }
-        exit 0;
     },
 );
 ok $proc;
@@ -38,13 +42,13 @@ $run->delegate('pty')->handle->push_read( line => sub {
     $joiner->send_event( 'initial_output' );
 
     $run->delegate('pty')->handle->push_write( "this is a test\n" );
+    $run->delegate('pty')->handle->push_shutdown;
 } );
 
 $run->delegate('pty')->handle->push_read( line => sub {
     my ($h, $line, $eol) = @_;
     is $line, 'this is a test', 'echoed input';
     $joiner->send_event( 'echoed_input' );
-    $run->delegate('pty')->handle->close_fh;
 } );
 
 $run->delegate('comm')->handle->push_read( line => sub {
@@ -55,5 +59,7 @@ $run->delegate('comm')->handle->push_read( line => sub {
 } );
 
 my $done = $completion_condvar->recv();
+
+
 isa_ok $done, 'AnyEvent::Subprocess::Done';
 is $done->exit_value, 0, 'got exit value 0';

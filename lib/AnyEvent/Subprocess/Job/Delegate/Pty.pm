@@ -90,11 +90,12 @@ sub build_run_delegates {
 sub parent_finalize_hook {
     my $self = shift;
     $self->pty->close_slave;
-    #$self->pty->make_slave_controlling_terminal;
 }
 
 sub child_setup_hook {
     my $self = shift;
+
+    $self->pty->make_slave_controlling_terminal;
 
     $self->handle->do_not_want;
 
