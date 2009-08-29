@@ -36,23 +36,23 @@ $run->delegate('pty')->handle->push_read( line => sub {
     my ($h, $line, $eol) = @_;
     is $line, 'Hello, parent!', 'got initial output';
     $joiner->send_event( 'initial_output' );
+
+    $run->delegate('pty')->handle->push_write( "this is a test\n" );
 } );
 
 $run->delegate('pty')->handle->push_read( line => sub {
     my ($h, $line, $eol) = @_;
     is $line, 'this is a test', 'echoed input';
     $joiner->send_event( 'echoed_input' );
-    close $run->delegate('pty')->handle->fh;
+    $run->delegate('pty')->handle->close_fh;
 } );
 
 $run->delegate('comm')->handle->push_read( line => sub {
     my ($h, $line, $eol) = @_;
     is $line, 'got line: {this is a test}', 'process got input and cooked it';
     $joiner->send_event( 'cooked_input' );
-    close $run->delegate('comm')->handle->fh;
+    $run->delegate('comm')->handle->close_fh;
 } );
-
-$run->delegate('pty')->handle->push_write( "this is a test\n" );
 
 my $done = $completion_condvar->recv();
 isa_ok $done, 'AnyEvent::Subprocess::Done';

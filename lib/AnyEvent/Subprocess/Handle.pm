@@ -64,6 +64,14 @@ sub do_not_want {
     $self->destroy;
 }
 
+# not push_close, since I am not sure what the semantics of that would
+# be.  use "on_drain( close_fh )" to close after your last write (or
+# push_shutdown).
+sub close_fh {
+    my $self = shift;
+    close $self->fh;
+}
+
 sub destroy {
     my ($self, @args) = @_;
     my $rbuf = $self->{rbuf};
