@@ -3,7 +3,7 @@ package AnyEvent::Subprocess::Job;
 use AnyEvent;
 use AnyEvent::Util; # portable socket/pipe
 use AnyEventX::Cancel qw(cancel_all_watchers);
-use AnyEvent::Subprocess::Types qw(JobDelegate);
+use AnyEvent::Subprocess::Types qw(JobDelegate SubprocessCode);
 use namespace::autoclean;
 
 our $VERSION = '0.01';
@@ -16,8 +16,9 @@ with 'AnyEvent::Subprocess::Role::WithDelegates' => {
 
 has 'code' => (
     is       => 'ro',
-    isa      => 'CodeRef', # TODO arrayref or string for `system`
+    isa      => SubprocessCode,
     required => 1,
+    coerce   => 1,
 );
 
 has 'on_completion' => (
