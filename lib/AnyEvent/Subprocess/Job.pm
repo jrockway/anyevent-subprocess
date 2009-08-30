@@ -113,6 +113,7 @@ sub _build_run {
     $self->_parent_setup_hook($run);
 
     my $child_pid = fork;
+    confess "fork error: $!" unless defined $child_pid;
 
     unless($child_pid){
         $self->_run_child();
