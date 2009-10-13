@@ -6,7 +6,6 @@ name 'AnyEvent-Subprocess';
 all_from 'lib/AnyEvent/Subprocess.pm';
 
 requires 'AnyEvent';
-requires 'AnyEventX::Cancel';
 requires 'Event::Join', '0.02';
 requires 'IO::Pty';
 requires 'Moose';

@@ -1,8 +1,6 @@
 package AnyEvent::Subprocess::Job;
 
 use AnyEvent;
-use AnyEvent::Util; # portable socket/pipe
-use AnyEventX::Cancel qw(cancel_all_watchers);
 use AnyEvent::Subprocess::Types qw(JobDelegate SubprocessCode);
 use namespace::autoclean;
 
@@ -25,13 +23,6 @@ has 'on_completion' => (
     is        => 'ro',
     isa       => 'CodeRef',
     predicate => '_has_on_completion',
-);
-
-has 'cancel_loop' => (
-    is       => 'ro',
-    isa      => 'Bool',
-    default  => 1,
-    required => 1,
 );
 
 has 'run_class' => (
@@ -66,9 +57,6 @@ sub _build_run_delegates {
 
 sub _child_setup_hook {
     my $self = shift;
-
-    cancel_all_watchers( warning => 0 )
-      if $self->cancel_loop;
 
     $self->_invoke_delegates('child_setup_hook');
     return;
@@ -113,6 +101,7 @@ sub _build_run {
 
     $self->_parent_setup_hook($run);
 
+    # TODO: configurable/delegate-able fork
     my $child_pid = fork;
     confess "fork error: $!" unless defined $child_pid;
 
