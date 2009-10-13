@@ -86,3 +86,69 @@ register_delegate( 'Capture' => sub {
 });
 
 1;
+
+__END__
+
+=head1 NAME
+
+AnyEvent::Subprocess::Delegates - sets up default delegate name/builder mappings
+
+=head1 DELEGATES PROVIDED
+
+=head2 Handle
+
+Provides connections to an arbitrary filehandle / fd / pipe / socket /
+etc.
+
+See L<AnyEvent::Subprocess::Job::Delegate::Handle>
+
+=head2 StandardHandles
+
+Provides connections to the child's STDIN/STDOUT/STDERR handles.
+Delegates are named stdin/stdout/stderr.  Optional arg prefix adds a
+prefix string to the delegates' names.
+
+=head2 CommHandle
+
+Provides a (bidirectional) socket to be shared between the child and
+parent.  Optional arg name provides delegate name (so you can have
+more than one, if desired).
+
+Optional arg name controls name; defaults to 'comm.
+
+=head2 Pty
+
+Provides the child with stdin and stdout attached to a pseudo-tty, and
+provides the parent with a delegate to control this.  Optional arg
+stderr controls whether or not the child's stderr will also go to the
+pty; defaults to no.
+
+Optional arg name controls name; defaults to 'pty'.
+
+=head2 CompletionCondvar
+
+Supplies a delegate that is a L<AnyEvent::Condvar> that is sent the
+child exit information ("Done class") when the child process exits.
+
+=head2 Callback
+
+Sets up an
+L<AnyEvent::Subprocess::Job::Delegate::Callback|AnyEvent::Subprocess::Job::Delegate::Callback>
+delegate.  Optional argument name controls callback instance name;
+defaults to 'callback'.
+
+=head2 Capture
+
+Captures a handle.  Mandatory arg handle is the name of the handle
+delegate to capture.  The handle must be readable by the parent.
+(i.e., a socket or a pipe from the child to the parent.)
+
+Delegate is named '[handle name]_capture'.
+
+(Note that you should not use the captured handle for reading anymore;
+this delegate will steal all input.  Captured output is returned in
+via a delegate in the "done class".)
+
+=head1 SEE ALSO
+
+See the test suite to see all of these shortcuts in use.

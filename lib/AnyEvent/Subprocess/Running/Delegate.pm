@@ -35,3 +35,41 @@ requires 'build_done_delegates';
 requires 'completion_hook';
 
 1;
+
+__END__
+
+=head1 NAME
+
+AnyEvent::Subprocess::Running::Delegate - delegate on the running process class
+
+=head1 REQUIRED METHODS
+
+Delegates must implement these methods:
+
+=head2 build_events
+
+Return a list of events that need to be sent before the run will be
+considered complete
+
+=head2 build_done_delegates
+
+Return a list of delegates to be passed to the "done" instance.
+
+=head2 completion_hook
+
+Called after all events are received but before calling the final
+C<on_complete> method.
+
+=head1 METHODS
+
+=head2 event_sender_for($name)
+
+Returns the event sender coderef for the event named C<$name>.
+C<$name> should have been returned by C<build_events>, otherwise this
+will break.
+
+=head2 send_event($name, $value)
+
+Method that works like calling the coderef returned by
+C<event_sender_for($name)>.
+

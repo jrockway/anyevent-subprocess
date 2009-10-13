@@ -1,6 +1,5 @@
 package AnyEvent::Subprocess::Running;
 use Moose;
-use MooseX::AttributeHelpers;
 use Event::Join;
 
 use AnyEvent;
@@ -114,3 +113,48 @@ sub BUILD {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+AnyEvent::Subprocess::Running - represents a running subprocess
+
+=head1 SYNOPSIS
+
+We are C<$run> in a sequence like:
+
+   my $job = AnyEvent::Subprocess->new ( ... );
+   my $run = $job->run;
+   $run->delegate('stdin')->push_write('Hello, my child!');
+   say "Running child as ", $run->child_pid;
+   $run->kill(11) if $you_enjoy_that_sort_of_thing;
+   my $done = $job->delegate('completion_condvar')->recv;
+   say "Child exited with signal ", $done->exit_signal;
+
+=head1 DESCRIPTION
+
+An instance of this class is returned when you start a subprocess.  It
+contains the child pid, any delegates that operate on the running
+subprocess (handles, captures, etc.), and some control methods.
+
+=head1 METHODS
+
+=head2 child_pid
+
+Returns the pid of the child
+
+=head2 kill($signal)
+
+Kills the child with signal number C<$signal>
+
+=head2 delegate($name)
+
+Returns the delegate named C<$name>
+
+=head1 SEE ALSO
+
+L<AnyEvent::Subprocess>
+
+L<AnyEvent::Subprocess::Role::WithDelegates>
+

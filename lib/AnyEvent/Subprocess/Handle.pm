@@ -83,3 +83,14 @@ sub destroy {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+AnyEvent::Subprocess::Handle - C<AnyEvent::Handle> subclass
+
+=head1 DESCRIPTION
+
+Assume this acts like a normal L<AnyEvent::Handle|AnyEvent::Handle>.
+It just has some extra code to make the handle delegate's life easier.

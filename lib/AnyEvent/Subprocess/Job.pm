@@ -116,3 +116,51 @@ sub _build_run {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+AnyEvent::Subprocess::Job - role representing a runnable job
+
+=head1 ATTRIBUTES
+
+=head2 code
+
+Coderef to run in the subprocess; or an arrayref or string to pass to C<exec>.
+
+=head2 on_completion
+
+Coderef to be called when the process exits.  Will be passed a
+L<AnyEvent::Subprocess::Done|AnyEvent::Subprocess::Done> object.
+
+=head2 run_class
+
+The classname of the "run" class returned by C<run>; defaults to
+C<AnyEvent::Subprocess::Running>.
+
+=head2 run
+
+The instance of the run class above; built lazily.
+
+Calling run twice does not run the process twice, but I think this
+might change in the future.
+
+=head1 METHODS
+
+All the methods in this role are internal, and include:
+
+    _init_run_instance
+    _build_run_delegates
+    _child_setup_hook
+    _child_finalize_hook
+    _parent_setup_hook
+    _parent_finalize_hook
+    _build_code_args
+    _run_child
+    _build_run
+
+If you want to have your own code run at various phases in the
+process, implement a delegate.  See
+L<AnyEvent::Subprocess::Job::Delegate> for details.
+

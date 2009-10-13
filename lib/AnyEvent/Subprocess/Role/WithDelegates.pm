@@ -88,3 +88,62 @@ role {
 };
 
 1;
+
+__END__
+
+=head1 NAME
+
+AnyEvent::Subprocess::Role::WithDelegates - paramaterized role consumed by classes that have delegates
+
+=head1 DESCRIPTION
+
+This role gives its consuming class the ability to have typed
+delegates.  The type of the delegate is provide at application time
+via the C<type> parameter.
+
+Once applied, you get:
+
+=head1 INITARGS
+
+=head2 delegates
+
+A list (arrayref) of delegates.  A delegate can be an instance of a
+C<AnyEvent::Subprocess::Delegate> class, a string (which will be
+resolved via
+L<AnyEvent::Subprocess::Role::WithDelegates::Manager|AnyEvent::Subprocess::Role::WithDelegates::Manager>,
+or a two-element hashref or arrayref of the delegate name and a
+hashref of delegate args. C<< [ Name => { args } ] >> or C<< { Name =>
+{ args } } >>.  C<Name> is treated like a string above, and the args
+are handled by the delegate's constructor or by the method supplied at
+delegate registration time.  See
+L<AnyEvent::Subprocess::Role::WithDelegates::Manager> for details.
+
+=head1 METHODS
+
+=head2 delegate($name)
+
+Return the delegate named C<$name>.  Dies if there is no delegate by
+that name.
+
+(This method is called by users of C<AnyEvent::Subprocess>.)
+
+=head2 _invoke_delegates($method, @args)
+
+Invokes C<< $delegate->$method(@args) >> on each delegate (in the
+order they were passed to the constructor).  Returns a list of the
+return values of each delegate.
+
+(This method is usually called internally by C<AnyEvent::Subprocess>,
+not by end-users.)
+
+=head1 SEE ALSO
+
+L<AnyEvent::Subprocess>
+
+Delegate users:
+
+L<AnyEvent::Subprocess::Job>
+
+L<AnyEvent::Subprocess::Running>
+
+L<AnyEvent::Subprocess::Done>

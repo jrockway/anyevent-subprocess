@@ -11,3 +11,9 @@ requires 'parent_finalize_hook';
 requires 'build_code_args';
 
 1;
+
+__END__
+
+=head1 NAME
+
+AnyEvent::Subprocess::Job::Delegate - role that delegates on the Job class must implement

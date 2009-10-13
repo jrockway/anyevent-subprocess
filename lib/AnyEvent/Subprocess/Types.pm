@@ -30,3 +30,17 @@ coerce SubprocessCode, from ArrayRef[Str], via {
 };
 
 1;
+
+__END__
+
+=head1 NAME
+
+AnyEvent::Subprocess::Types - C<MooseX::Types> used by the module
+
+=head1 TYPES
+
+    Direction
+    JobDelegate
+    RunDelegate
+    DoneDelegate
+    SubprocessCode
