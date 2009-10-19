@@ -2,18 +2,16 @@ package AnyEvent::Subprocess::Running::Delegate::CaptureHandle;
 use Moose;
 use AnyEvent::Subprocess::Done::Delegate::CaptureHandle;
 
-use MooseX::AttributeHelpers;
-
 with 'AnyEvent::Subprocess::Running::Delegate';
 
 has 'output' => (
-    metaclass => 'String',
-    init_arg  => undef,
-    is        => 'ro',
-    isa       => 'Str',
-    default   => '',
-    provides  => {
-        append => '_append_output',
+    traits   => ['String'],
+    init_arg => undef,
+    is       => 'ro',
+    isa      => 'Str',
+    default  => '',
+    handles  => {
+        '_append_output' => 'append',
     },
 );
 

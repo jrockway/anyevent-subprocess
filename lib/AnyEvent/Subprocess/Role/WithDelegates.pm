@@ -1,6 +1,5 @@
 package AnyEvent::Subprocess::Role::WithDelegates;
 use MooseX::Role::Parameterized;
-use MooseX::AttributeHelpers;
 
 use MooseX::Types::Moose qw(HashRef ArrayRef Str);
 
@@ -33,15 +32,15 @@ role {
     );
 
     has 'delegates_table' => (
-        metaclass  => 'Collection::Hash',
+        traits     => ['Hash'],
         init_arg   => undef,
         isa        => HashRef[$p->type],
         auto_deref => 1,
         lazy       => 1,
         builder    => '_build_delegates_table',
-        provides   => {
-            get    => 'delegate',
-            exists => '_delegate_exists',
+        handles    => {
+            delegate           => 'get',
+            '_delegate_exists' => 'exists',
         },
     );
 
