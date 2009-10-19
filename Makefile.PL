@@ -14,8 +14,10 @@ requires 'MooseX::Role::Parameterized';
 requires 'MooseX::StrictConstructor';
 requires 'POSIX';
 requires 'namespace::autoclean';
+requires 'Try::Tiny';
 
 test_requires 'Test::More';
+test_requires 'Test::Exception';
 test_requires 'ok';
 
 auto_install;

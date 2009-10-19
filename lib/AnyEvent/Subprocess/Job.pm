@@ -2,6 +2,9 @@ package AnyEvent::Subprocess::Job;
 
 use AnyEvent;
 use AnyEvent::Subprocess::Types qw(JobDelegate SubprocessCode);
+
+use Try::Tiny;
+
 use namespace::autoclean;
 
 our $VERSION = '0.01';
@@ -39,6 +42,13 @@ has 'run' => (
     is      => 'ro',
     lazy    => 1,
     builder => '_build_run',
+);
+
+has 'verbose' => (
+    is       => 'ro',
+    isa      => 'Bool',
+    default  => sub { 1 },
+    required => 1,
 );
 
 sub _init_run_instance {
@@ -86,12 +96,27 @@ sub _build_code_args {
     return $self->_invoke_delegates('build_code_args');
 }
 
+# XXX: it would be nice to "catch" exceptions in the child and throw
+# them to the parent
 sub _run_child {
     my $self = shift;
 
-    $self->_child_setup_hook;
-    $self->code->({$self->_build_code_args});
-    return $self->_child_finalize_hook;
+    # scope_guard {
+    #     exit 255;
+    # };
+
+    try {
+        $self->_child_setup_hook;
+        $self->code->({$self->_build_code_args});
+        $self->_child_finalize_hook;
+    }
+    catch {
+        # emulate perl's default behavior here
+        print {*STDERR} $_ if $self->verbose;
+        exit 255;
+    };
+
+    return;
 }
 
 sub _build_run {

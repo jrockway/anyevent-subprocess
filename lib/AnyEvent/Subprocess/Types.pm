@@ -21,12 +21,13 @@ subtype SubprocessCode, as CodeRef;
 
 coerce SubprocessCode, from Str, via {
     my $cmd = $_;
-    return sub { exec $cmd };
+    return sub { no warnings; exec $cmd or die "Failed to exec '$cmd': $!" };
 };
 
 coerce SubprocessCode, from ArrayRef[Str], via {
     my $cmd = $_;
-    return sub { exec @$cmd };
+    my $str = join ' ', @$cmd;
+    return sub { no warnings; exec @$cmd or die "Failed to exec '$str': $!" };
 };
 
 1;
@@ -35,7 +36,7 @@ __END__
 
 =head1 NAME
 
-AnyEvent::Subprocess::Types - C<MooseX::Types> used by the module
+AnyEvent::Subprocess::Types - C<MooseX::Types> used internally
 
 =head1 TYPES
 
