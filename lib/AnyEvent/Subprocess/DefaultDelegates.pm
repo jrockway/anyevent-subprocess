@@ -9,6 +9,7 @@ use AnyEvent::Subprocess::Job::Delegate::Callback;
 use AnyEvent::Subprocess::Job::Delegate::CaptureHandle;
 use AnyEvent::Subprocess::Job::Delegate::CompletionCondvar;
 use AnyEvent::Subprocess::Job::Delegate::Handle;
+use AnyEvent::Subprocess::Job::Delegate::MonitorHandle;
 use AnyEvent::Subprocess::Job::Delegate::Pty;
 
 register_delegate( 'Handle' => 'AnyEvent::Subprocess::Job::Delegate::Handle' );
@@ -85,6 +86,20 @@ register_delegate( 'Capture' => sub {
     return AnyEvent::Subprocess::Job::Delegate::CaptureHandle->new(%$args);
 });
 
+register_delegate( 'MonitorHandle' => sub {
+    my $args = shift || {};
+    confess 'need handle' unless $args->{handle};
+    confess 'need callbacks' unless $args->{callbacks} || $args->{callback};
+
+    my $handle = $args->{handle};
+    $args->{name} ||= $handle . '_monitor';
+
+    $args->{callbacks} ||= $args->{callback};
+    delete $args->{callback};
+
+    return AnyEvent::Subprocess::Job::Delegate::MonitorHandle->new(%$args);
+});
+
 1;
 
 __END__
@@ -148,6 +163,10 @@ Delegate is named '[handle name]_capture'.
 (Note that you should not use the captured handle for reading anymore;
 this delegate will steal all input.  Captured output is returned in
 via a delegate in the "done class".)
+
+=head2 MonitorHandle
+
+Calls a list of coderefs whenever a line is read from a handle.
 
 =head1 SEE ALSO
 

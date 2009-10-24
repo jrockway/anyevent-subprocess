@@ -96,6 +96,7 @@ sub _completion_hook {
     );
 
     $args{done} = $done;
+    $args{run} = $self;
     $self->_invoke_delegates('completion_hook', \%args);
     $self->on_completion->($done);
 }

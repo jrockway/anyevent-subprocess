@@ -5,6 +5,8 @@ use MooseX::Types -declare => [ qw{
     RunDelegate
     DoneDelegate
     SubprocessCode
+    CodeList
+    WhenToCallBack
 }];
 
 use MooseX::Types::Moose qw(Str ArrayRef CodeRef);
@@ -29,6 +31,11 @@ coerce SubprocessCode, from ArrayRef[Str], via {
     my $str = join ' ', @$cmd;
     return sub { no warnings; exec @$cmd or die "Failed to exec '$str': $!" };
 };
+
+subtype CodeList, as ArrayRef[CodeRef];
+coerce CodeList, from CodeRef, via { [$_] };
+
+enum WhenToCallBack, qw/Readable Line/;
 
 1;
 
