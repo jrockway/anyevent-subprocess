@@ -1,0 +1,5 @@
+0.00_01     Mon Oct 26 03:13:21 CDT 2009
+            - developer preview
+            * needs a lot more docs
+            * a few design decisions still in question
+             - should delegates get the instnace they are attached to?
