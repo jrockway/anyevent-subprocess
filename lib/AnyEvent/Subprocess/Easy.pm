@@ -104,6 +104,11 @@ You can also pass in a coderef if you like; it will be called with an
 undefined number of arguments in the child process (and should C<exit 0>
 if it is successful).
 
+=head1 BUGS
+
+Not enough "easy" stuff here yet.  Please contribute your common
+patterns!
+
 =head1 SEE ALSO
 
 L<AnyEvent::Subprocess|AnyEvent::Subprocess>
