@@ -42,6 +42,11 @@ sub _build_dumped_core {
     return $self->exit_status & 128;
 }
 
+sub is_success {
+    my $self = shift;
+    return $self->exit_status == 0;
+}
+
 1;
 
 __END__
@@ -91,6 +96,11 @@ The signal number the child was killed by, if any.
 =head2 dumped_core
 
 True if the child dumped core.
+
+=head2 is_success
+
+True if the exit_status is 0.  If this is false, your process dumped
+core, exited due to a signal, or exited with a value other than 0.
 
 =head1 SEE ALSO
 

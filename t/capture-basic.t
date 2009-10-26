@@ -32,4 +32,4 @@ is $done->delegate('stdout_capture')->output,
   'Hello, world.  This is stdout.', 'got out';
 is $done->delegate('stderr_capture')->output,
   'OH HAI, THIS IS STDERR.', 'got err';
-is $done->exit_value, 0, 'exit success';
+ok $done->is_success, 'exit success';

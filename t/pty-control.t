@@ -21,5 +21,5 @@ $run->delegate('pty')->handle->push_read( line => sub {
 
 my $done = $run->delegate('completion_condvar')->recv;
 
-is $done->exit_status, 0, 'exited ok';
+ok $done->is_success, 'exited ok';
 

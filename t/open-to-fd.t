@@ -48,7 +48,7 @@ $run->delegate('extra_in')->handle->push_write("extra_in\n");
 
 my $done = $condvar->recv;
 
-is $done->exit_value, 0, 'exited ok';
+ok $done->is_success, 'exited ok';
 is $done->delegate('stdout_capture')->output, "Got: stdin\n", 'got stdin';
 is $done->delegate('extra_capture')->output, "Got: extra_in\n", 'got extra_in';
 is $done->delegate('stderr_capture')->output, "No errors\n", 'no errors on stderr';
