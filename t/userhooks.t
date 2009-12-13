@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 5;
+use Test::More tests => 8;
 
 use AnyEvent::Subprocess;
 
@@ -15,6 +15,7 @@ my $s = AnyEvent::Subprocess->new(
         'CompletionCondvar',
         'StandardHandles',
         { Callback => {
+            state => { whatever => 42 },
             child_setup_hook => sub {
                 our $FOO = 123;
             },
@@ -35,9 +36,19 @@ my $s = AnyEvent::Subprocess->new(
     ],
 );
 
+is $s->delegate('callback')->state->{whatever}, 42,
+  'got job "state"';
+
 my $run = $s->run;
+
+is $run->delegate('callback')->state->{whatever}, 42,
+  'got run "state"';
+
 my $done = $run->delegate('completion_condvar')->recv;
 $is_done = 1;
+
+is $done->delegate('callback')->state->{whatever}, 42,
+  'got done "state"';
 
 my $out = $run->delegate('stdout')->handle->{rbuf};
 

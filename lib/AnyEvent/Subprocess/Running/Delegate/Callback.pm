@@ -1,6 +1,8 @@
 package AnyEvent::Subprocess::Running::Delegate::Callback;
 use Moose;
 
+use AnyEvent::Subprocess::Done::Delegate::State; # name change
+
 with 'AnyEvent::Subprocess::Running::Delegate';
 
 has 'completion_hook' => (
@@ -11,12 +13,26 @@ has 'completion_hook' => (
     required => 1,
 );
 
+
+has 'state' => (
+    is       => 'ro',
+    isa      => 'HashRef',
+    required => 1,
+    default  => sub { +{} },
+);
+
 sub completion_hook {
     my ($self, $running, @args) = @_;
     $self->_completion_hook->($self, @args);
 }
 
-sub build_done_delegates {}
+sub build_done_delegates {
+    my ($self) = @_;
+    return AnyEvent::Subprocess::Done::Delegate::State->new(
+        name  => $self->name,
+        state => $self->state,
+    );
+}
 sub build_events {}
 
 1;

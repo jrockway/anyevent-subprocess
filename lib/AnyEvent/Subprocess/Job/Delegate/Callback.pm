@@ -18,11 +18,19 @@ for my $a (qw/child_setup_hook child_finalize_hook
     );
 }
 
+has 'state' => (
+    is       => 'ro',
+    isa      => 'HashRef',
+    required => 1,
+    default  => sub { +{} },
+);
+
 sub build_run_delegates {
     my $self = shift;
     return AnyEvent::Subprocess::Running::Delegate::Callback->new(
           name            => $self->name,
           completion_hook => $self->_completion_hook,
+          state           => $self->state,
       );
 }
 
