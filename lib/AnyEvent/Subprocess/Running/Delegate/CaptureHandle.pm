@@ -16,7 +16,7 @@ has 'output' => (
 );
 
 sub build_done_delegates {
-    my $self = shift;
+    my ($self, $running) = @_;
 
     return AnyEvent::Subprocess::Done::Delegate::CaptureHandle->new(
         name   => $self->name,

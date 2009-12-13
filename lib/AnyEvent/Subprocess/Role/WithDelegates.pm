@@ -81,7 +81,7 @@ role {
 
         return map {
             my $d = $_;
-            $d->$method(@args);
+            $d->$method($self, @args);
         } $self->_delegates;
     };
 };

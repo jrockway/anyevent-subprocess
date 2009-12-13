@@ -18,7 +18,7 @@ sub build_run_delegates {
 }
 
 sub parent_setup_hook {
-    my ($self, $run) = @_;
+    my ($self, $job, $run) = @_;
 
     $run->delegate($self->handle)->handle->on_read( sub {
         my ($handle) = @_;

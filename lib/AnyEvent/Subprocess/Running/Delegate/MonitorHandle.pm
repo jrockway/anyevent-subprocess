@@ -15,7 +15,7 @@ sub build_events {}
 sub build_done_delegates {}
 
 sub completion_hook {
-    my ($self, $args) = @_;
+    my ($self, $running, $args) = @_;
 
     my $leftover =
       delete $args->{run}->delegate($self->_job_delegate->handle)->handle->{rbuf};

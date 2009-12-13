@@ -27,25 +27,26 @@ sub build_run_delegates {
 }
 
 sub child_setup_hook {
-    my ($self) = @_;
-    $self->_child_setup_hook->($self);
+    my ($self, $job) = @_;
+    $self->_child_setup_hook->($self, $job);
 }
 
 sub child_finalize_hook {
-    my ($self) = @_;
-    $self->_child_finalize_hook->($self);
+    my ($self, $job) = @_;
+    $self->_child_finalize_hook->($self, $job);
 }
 
 sub parent_setup_hook {
-    my ($self, $run) = @_;
-    $self->_parent_setup_hook->($self, $run);
+    my ($self, $job, $run) = @_;
+    $self->_parent_setup_hook->($self, $job, $run);
 }
 
 sub parent_finalize_hook {
-    my ($self) = @_;
-    $self->_parent_finalize_hook->($self);
+    my ($self, $job) = @_;
+    $self->_parent_finalize_hook->($self, $job);
 }
 
+# XXX: add this
 sub build_code_args {}
 
 1;

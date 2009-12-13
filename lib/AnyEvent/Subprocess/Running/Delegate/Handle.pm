@@ -22,7 +22,7 @@ has 'handle' => (
 );
 
 sub build_events {
-    my $self = shift;
+    my ($self, $running) = @_;
 
     if( $self->direction eq 'r' ){
         return $self->name;

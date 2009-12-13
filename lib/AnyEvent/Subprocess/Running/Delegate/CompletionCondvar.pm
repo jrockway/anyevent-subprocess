@@ -13,7 +13,7 @@ has 'condvar' => (
 );
 
 sub completion_hook {
-    my ($self, $args) = @_;
+    my ($self, $running, $args) = @_;
     $self->send($args->{done});
 }
 

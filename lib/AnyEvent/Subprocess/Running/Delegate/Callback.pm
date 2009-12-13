@@ -12,7 +12,7 @@ has 'completion_hook' => (
 );
 
 sub completion_hook {
-    my ($self, @args) = @_;
+    my ($self, $running, @args) = @_;
     $self->_completion_hook->($self, @args);
 }
 

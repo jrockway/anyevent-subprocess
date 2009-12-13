@@ -34,7 +34,7 @@ has 'when' => (
 );
 
 sub parent_setup_hook {
-    my ($self, $run) = @_;
+    my ($self, $job, $run) = @_;
 
     my $handle = $run->delegate($self->handle)->handle;
 
