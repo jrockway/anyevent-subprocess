@@ -7,10 +7,11 @@ all_from 'lib/AnyEvent/Subprocess.pm';
 
 requires 'AnyEvent' => '5.2';
 requires 'Event::Join', '0.02';
-requires 'IO::Pty';
+requires 'IO::Pty'; # TODO: remove this dep on w32.
 requires 'Moose', '0.91';
 requires 'MooseX::Role::Parameterized';
 requires 'MooseX::StrictConstructor';
+requires 'MooseX::Types', '0.21';
 requires 'POSIX';
 requires 'namespace::autoclean';
 requires 'Try::Tiny';
