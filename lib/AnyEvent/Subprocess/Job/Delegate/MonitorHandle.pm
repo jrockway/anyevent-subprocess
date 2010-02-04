@@ -81,3 +81,32 @@ sub parent_finalize_hook {}
 sub build_code_args {}
 
 1;
+
+__END__
+
+=head1 NAME
+
+AnyEvent::Subprocess::Running::Delegate::MonitorHandle - monitor a handle for input, invoke callbacks with that input
+
+=head1 DESCRIPTION
+
+Monitors a handle for input, and calls a list of coderefs when there is input.  The coderefs get the input.
+
+=head1 INITARGS
+
+=head2 name
+
+The name of the delegate that has the filehandle you want to monitor.
+
+=head2 callbacks
+
+ArrayRef[CodeRef]s to call with input.
+
+=head2 when
+
+'Line' to be called with each line, something else to be called
+whenever there is data in the read buffer.
+
+=head1 METHODS
+
+Don't call us, we'll call you.

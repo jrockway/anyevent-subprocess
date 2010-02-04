@@ -94,3 +94,14 @@ AnyEvent::Subprocess::Handle - C<AnyEvent::Handle> subclass
 
 Assume this acts like a normal L<AnyEvent::Handle|AnyEvent::Handle>.
 It just has some extra code to make the handle delegate's life easier.
+
+=head1 EXTRA METHODS
+
+=head2 name
+
+Returns the name of the filehandle, or "<fd #>" if no name was passed
+to the constructor.
+
+=head2 close_fh
+
+Closes the underlying filehandle, sending EOF to the child process.

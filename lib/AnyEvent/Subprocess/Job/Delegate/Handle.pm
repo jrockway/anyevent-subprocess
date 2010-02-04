@@ -154,3 +154,45 @@ sub child_finalize_hook {}
 
 1;
 
+__END__
+
+=head1 NAME
+
+AnyEvent::Subprocess::Job::Delegate::Handle - share a filehandle or socket with the child
+
+=head1 INITARGS
+
+=head2 direction
+
+'r' for a pipe from the child to the parent, 'w' for a pipe from the
+parent to the child, 'rw' for a socket.
+
+=head2 replace
+
+Optional.  If specified, can be a Perl filehandle (C<\*STDERR>) or
+integer fd number (C<2>).  This filehandle will be opened to the object
+created by this delegate in the child.  (So if you say
+C<< direction => 'r', replace => \*STDERR >>, the parent will be able to
+read the child's STDERR via this delegate.  If you say
+C<< direction => 'w', replace => 3 >>, then the child can open fd #3
+ and read from the parent.)
+
+=head2 pass_to_child
+
+If you don't want to replace a filehandle or file descriptor number,
+you can just pass the filehandle object to the child instead.  If you
+set this to true, the child will get its end of the socket or pipe in
+the argument hash passed to the child coderef.  The key will be the
+same as the name the delegate.
+
+=head1 METHODS
+
+=head2 handle
+
+This is the
+L<AnyEvent::Subprocess::Handle|AnyEvent::Subprocess::Handle> object
+that you use to communicate with the child.  You typically want to
+C<push_read> and C<push_write>, but all of
+L<AnyEvent::Handle|AnyEvent::Handle>'s operations are available.  See
+that manpage for further details; there is a lot you can do, and this
+module makes it all very easy.

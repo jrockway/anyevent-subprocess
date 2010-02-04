@@ -1,5 +1,7 @@
-0.01        Sun Dec 13 20:42:45 CST 2009
+0.01        Thu Feb  4 04:41:11 CST 2010
             - delegates get the instance they are attached to
+            - run can be called multiple times
+            - lots more docs and examples (still needs more!)
 
 0.00_01     Mon Oct 26 03:13:21 CDT 2009
             - developer preview

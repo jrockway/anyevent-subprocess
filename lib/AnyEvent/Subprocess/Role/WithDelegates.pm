@@ -136,7 +136,7 @@ that name.
 
 =head2 _invoke_delegates($method, @args)
 
-Invokes C<< $delegate->$method(@args) >> on each delegate (in the
+Invokes C<< $delegate->$method($self, @args) >> on each delegate (in the
 order they were passed to the constructor).  Returns a list of the
 return values of each delegate.
 

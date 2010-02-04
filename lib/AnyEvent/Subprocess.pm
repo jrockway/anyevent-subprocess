@@ -2,7 +2,7 @@ package AnyEvent::Subprocess;
 use Moose;
 with 'AnyEvent::Subprocess::Job';
 
-our $VERSION = '0.00_01';
+our $VERSION = '0.01';
 
 use AnyEvent::Subprocess::DefaultDelegates;
 
@@ -37,21 +37,27 @@ AnyEvent::Subprocess - flexible, OO, asynchronous process spawning and managemen
     my $run = $job->run;
 
     # add watcher to print the next line we see on the child's stdout
-    $run->delegate('stdout')->push_read( line => sub {
+    $run->delegate('stdout')->handle->push_read( line => sub {
         my ($h, $line) = @_;
         say "The child said: $line";
     });
 
     # write to the child's stdin
-    $run->delegate('stdin')->push_write("Hello, world!\n");
+    $run->delegate('stdin')->handle->push_write("Hello, world!\n");
 
-    # prints "The child said: Got line: Hello, world!"
+    # close stdin after it has been written to the child
+    $run->delegate('stdin')->handle->on_drain(sub { $_[0]->close_fh });
 
-    # kill the child
-    $run->kill(9); # BAI.
+    # kill the child if it takes too long to produce a result
+    my $killer = AnyEvent->timer( after => 42, interval => 0, cb => sub {
+       $run->kill(2); # SIGINT.
+    });
 
     # ensure the event loop runs until the on_completion handler dies
     EV::loop(); # you can use any AnyEvent-compatible event loop, including POE
+
+    # eventually prints "The child said: Got line: Hello, world!", or
+    # perhaps dies if your system is really really overloaded.
 
 =head1 OVERVIEW
 
@@ -105,21 +111,23 @@ handle and gives it to your program after the child exits (via the
 C<Done> instance).
 
 (This is also included via the C<CaptureHandle> delegate.  See
-L<AnyEvent::Subprocess::Job::Delegate::CaptureHandle.)
+L<AnyEvent::Subprocess::Job::Delegate::CaptureHandle>.)
 
 All of this integrates into your existing event-based app; waiting for
 IO from the child (or waiting for the child to exit) is asynchronous,
 and lets your app do other work while waiting for the child.  (It can
 integrate nicely into Coro, for example, unlike the default C<qx//>.)
 
-=head1 TUTORIAL
+=head1 DESCRIPTION
 
 There are so many possible ways to use this module that a tutorial
 would take me months to write.  You should definitely read the test
-suite to see what possibilities exist.
+suite to see what possibilities exist.  (There is also an examples
+directory in the dist.)
 
 The basic "flow" is like in the SYNOPSIS section; create a job, call
-run, wait for your callback to be called with the results.
+run, wait for your callback to be called with the exit status of the
+subprocess.
 
 The fun comes when you add delegates.
 
@@ -143,7 +151,43 @@ how all the sugary names work, just open C<DefaultDelegates.pm> and
 take a look.  (The documentation for that module also covers that, as
 well as how to define your own delegate builders.)
 
-XXX: more docs
+If you are too lazy to look -- there are delegates for giving the
+child arbitrary sockets or pipes opened to arbitrary file descriptors
+(so you can deal with more than stdin/stdout/stderr and communicate
+bidirectionally between the parent and child), there is a delegate for
+giving the child a pseudo-tty (which can run complicatged programs,
+like emacs!), there is a delegate for capturing any input
+automatically, and passing it back to the parent via the C<Done>
+object, and there is a delegate for calling functions in the parent
+when certain events are received.
+
+Once you have decided what delegates your job needs, you need to
+create a job object:
+
+   my $proc = AnyEvent::Subprocess->new(
+       delegates     => [qw/List them here/],
+       code          => sub { code to run in the child },
+       on_completion => sub { code to run in the parent when the child is done },
+   );
+
+Then you can run it:
+
+   my $running = $proc->run;
+   my $another = $proc->run({ with => 'args' }); # a separate process
+
+The C<code> coderef receives a hashref as an argument; delegates
+typically populate this for you, but you can also pass a hashref of
+args to run (that will be merged with any arguments the delegates
+create; the delegates' arguments "win" if there is a conflict).  The
+code then runs in a child process until it stops running for some
+reason.  The C<on_completion> hook is then run in the parent, with the
+L<AnyEvent::Subprocess::Done|AnyEvent::Subprocess::Done> object passed
+in as an argument.
+
+You can, of course, have as many children running concurrently as you
+desire.  The event loop handles managing the any IO with the child,
+and the notifications of the child dying.  (You don't need to deal
+with SIGCHLD or anything like that.)
 
 =head1 BUGS
 
@@ -167,8 +211,10 @@ watchers that doesn't work well yet.)
 
 Jonathan Rockway C<< <jrockway@cpan.org> >>
 
-Yuval Kogman helped with the design.  If he wasn't around, this module
-would be about 1000x slower (!)
+Yuval Kogman helped with the design.  His suggestions make it possible
+to easily spawn thousands of processes a second.  Might not be a good
+thing to do, but this module isn't going to be your bottleneck.  Perl
+is fast!
 
 =head1 COPYRIGHT
 

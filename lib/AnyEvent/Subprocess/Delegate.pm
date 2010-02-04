@@ -22,6 +22,12 @@ AnyEvent::Subprocess::Delegate - role representing a delegate
 All delegates consume this role; it provides C<name> and is a type
 tag.
 
+=head1 METHODS
+
+=head2 clone
+
+Returns a deep copy of the delegate.
+
 =head1 REQUIRED ATTRIBUTES
 
 =head2 name

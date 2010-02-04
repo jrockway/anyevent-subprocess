@@ -115,3 +115,41 @@ sub child_finalize_hook {}
 sub parent_setup_hook {}
 
 1;
+
+__END__
+
+=head1 NAME
+
+AnyEvent::Subprocess::Job::Delegate::Pty - give the child a pseudo-terminal
+
+=head1 DESCRIPTION
+
+You can have more than one of these, but the last one will become the
+controlling tty.
+
+=head1 INITARGS
+
+=head2 redirect_handles
+
+A list of filehandles that will be connected to this Pty in the child.
+Defaults to stdout and stderr.
+
+=head1 METHODS
+
+=head2 pty
+
+Returns the L<IO::Pty|IO::Pty> object.  You can use this object to set
+the child's window size, etc.
+
+=head2 handle
+
+The handle that you can read/write to communicate with the child.
+Note that writing can be confusing; because the Pty emulates a
+terminal, and terminals echo input, you will get back things that you
+write.  You can disable this behavior by changing the terminal
+parameters in the child process.
+
+(If you don't know what "raw mode" and "cooked mode" are, you should
+read up on UNIX terminals.  You might really want a pipe, not a pseudo
+terminal.)
+

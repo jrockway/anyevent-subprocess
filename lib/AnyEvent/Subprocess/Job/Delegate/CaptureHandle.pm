@@ -33,3 +33,22 @@ sub child_setup_hook {}
 sub parent_finalize_hook {}
 
 1;
+
+__END__
+
+=head1 NAME
+
+AnyEvent::Subprocess::Job::Delegate::CaptureHandle - capture the data that comes in via a handle
+
+=head1 DESCRIPTION
+
+If you have a Handle delegate and just want to save the output
+somewhere, use this delegate.  It accepts the name of the delegate,
+reads from the handle while the process is running, and makes all the
+output available via the Done instance.
+
+=head1 INITARGS
+
+=head2 handle
+
+The name of the handle you want to capture's delegate.
