@@ -7,7 +7,8 @@ use ok 'AnyEvent::Subprocess';
 my $proc = AnyEvent::Subprocess->new(
     delegates => ['StandardHandles', 'CompletionCondvar'],
     code      => sub {
-        warn "starting child";
+        my $name = $_[0]->{name};
+        warn "starting child $name";
 
         while(my $line = <STDIN>){
             chomp $line;
@@ -18,7 +19,7 @@ my $proc = AnyEvent::Subprocess->new(
 );
 ok $proc;
 
-my $run = $proc->run;
+my $run = $proc->run({ name => 'foo' });
 isa_ok $run, 'AnyEvent::Subprocess::Running';
 
 my $condvar = $run->delegate('completion_condvar')->condvar;
@@ -36,7 +37,7 @@ isa_ok $done, 'AnyEvent::Subprocess::Done';
 is $done->exit_value, 0, 'got exit status 0';
 
 like $run->delegate('stderr')->handle->{rbuf},
-  qr/^starting child.*^child is done/ms,
+  qr/^starting child foo.*^child is done/ms,
   'captured stderr';
 
 is $run->delegate('stdout')->handle->{rbuf},
