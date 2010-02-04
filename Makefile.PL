@@ -11,7 +11,7 @@ requires 'IO::Pty'; # TODO: remove this dep on w32.
 requires 'Moose', '0.91';
 requires 'MooseX::Role::Parameterized';
 requires 'MooseX::StrictConstructor';
-requires 'MooseX::Types', '0.21';
+requires 'MooseX::Types', '0.19';
 requires 'POSIX';
 requires 'namespace::autoclean';
 requires 'Try::Tiny';
