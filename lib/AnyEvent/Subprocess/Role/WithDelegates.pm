@@ -11,6 +11,8 @@ parameter type => (
 );
 
 role {
+    with 'MooseX::Clone';
+
     my $p = shift;
 
     has 'delegate_list' => (
@@ -23,6 +25,7 @@ role {
     );
 
     has 'delegate_ordering' => (
+        traits     => ['NoClone'],
         init_arg   => undef,
         reader     => '_delegates',
         isa        => ArrayRef[$p->type],
@@ -32,7 +35,7 @@ role {
     );
 
     has 'delegates_table' => (
-        traits     => ['Hash'],
+        traits     => ['Hash', 'NoClone'],
         init_arg   => undef,
         isa        => HashRef[$p->type],
         auto_deref => 1,
@@ -69,6 +72,11 @@ role {
         return {
             map { $_->name => $_ } $self->_delegates,
         };
+    };
+
+    after 'clone' => sub {
+        my $self = shift;
+        $self->_delegates; # vivify noclones after cloning
     };
 
     method 'BUILD' => sub {

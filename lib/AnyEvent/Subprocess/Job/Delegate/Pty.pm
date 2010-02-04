@@ -8,17 +8,20 @@ use POSIX qw(dup2);
 with 'AnyEvent::Subprocess::Job::Delegate';
 
 has 'pty' => (
+    traits     => ['NoClone'],
     is         => 'ro',
     isa        => 'IO::Pty',
     lazy_build => 1,
 );
 
 has 'slave_pty' => (
+    traits     => ['NoClone'],
     is         => 'ro',
     lazy_build => 1,
 );
 
 has 'handle' => (
+    traits     => ['NoClone'],
     is         => 'ro',
     isa        => 'AnyEvent::Subprocess::Handle',
     lazy_build => 1,

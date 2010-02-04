@@ -39,6 +39,7 @@ has 'pass_to_child' => (
 );
 
 has 'pipes' => (
+    traits     => ['NoClone'],
     is         => 'ro',
     isa        => ArrayRef[GlobRef],
     lazy_build => 1,
@@ -70,6 +71,7 @@ has 'run_delegate_class' => (
 );
 
 has 'handle' => (
+    traits     => ['NoClone'],
     is         => 'ro',
     isa        => 'AnyEvent::Subprocess::Handle',
     lazy_build => 1,

@@ -38,12 +38,6 @@ has 'run_class' => (
     },
 );
 
-has 'run' => (
-    is      => 'ro',
-    lazy    => 1,
-    builder => '_build_run',
-);
-
 has 'verbose' => (
     is       => 'ro',
     isa      => 'Bool',
@@ -119,8 +113,9 @@ sub _run_child {
     return;
 }
 
-sub _build_run {
-    my $self = shift;
+sub run {
+    my $orig_self = shift;
+    my $self = $orig_self->clone;
 
     my $run = $self->_init_run_instance;
 

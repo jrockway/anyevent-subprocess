@@ -1,6 +1,8 @@
 package AnyEvent::Subprocess::Delegate;
 use Moose::Role;
 
+with 'MooseX::Clone';
+
 has 'name' => (
     is       => 'ro',
     isa      => 'Str',
