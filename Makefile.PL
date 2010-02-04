@@ -9,6 +9,7 @@ requires 'AnyEvent' => '5.2';
 requires 'Event::Join', '0.02';
 requires 'IO::Pty'; # TODO: remove this dep on w32.
 requires 'Moose', '0.91';
+requires 'MooseX::Clone';
 requires 'MooseX::Role::Parameterized';
 requires 'MooseX::StrictConstructor';
 requires 'MooseX::Types', '0.19';
