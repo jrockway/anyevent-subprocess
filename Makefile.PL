@@ -6,8 +6,8 @@ name 'AnyEvent-Subprocess';
 all_from 'lib/AnyEvent/Subprocess.pm';
 
 requires 'AnyEvent' => '5.2';
-requires 'Event::Join', '0.02';
-requires 'IO::Pty'; # TODO: remove this dep on w32.
+requires 'Event::Join', '0.04';
+requires 'IO::Pty'; # TODO: remove this dep on w32; not actually required.
 requires 'Moose', '0.91';
 requires 'MooseX::Clone';
 requires 'MooseX::Role::Parameterized';

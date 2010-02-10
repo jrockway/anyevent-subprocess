@@ -1,3 +1,13 @@
+0.02        Wed Feb 10 06:14:39 CST 2010
+            - allow Job delegate to receive child return value and exception
+            - don't "exit 0" in the child handler
+            - remove our own exception-printing code
+            - add PrintError delegate (use this instead)
+            - fix cloning of Job delegates (they are cloned correctly now)
+            - make classes immutable
+            - doc fixes (but not everything)
+            - dependency fixes
+
 0.01        Thu Feb  4 04:41:11 CST 2010
             - delegates get the instance they are attached to
             - run can be called multiple times
