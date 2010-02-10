@@ -32,6 +32,7 @@ sub child_finalize_hook {}
 sub child_setup_hook {}
 sub parent_finalize_hook {}
 sub receive_child_result {}
+sub receive_child_error {}
 
 __PACKAGE__->meta->make_immutable;
 

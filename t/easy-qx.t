@@ -14,7 +14,7 @@ use AnyEvent::Subprocess::Easy qw(qx_nonblock);
 
 {
     # if you have a command with this name on your machine...
-    my $cv = qx_nonblock('argle bargle', 'gobbeldy gook');
+    my $cv = qx_nonblock('I CAN HAZ', 'CHEZBURGER?');
 
     throws_ok {
         my $result = $cv->recv;

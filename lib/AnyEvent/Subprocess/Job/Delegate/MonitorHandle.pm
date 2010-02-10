@@ -80,6 +80,7 @@ sub child_finalize_hook {}
 sub parent_finalize_hook {}
 sub build_code_args {}
 sub receive_child_result {}
+sub receive_child_error {}
 
 __PACKAGE__->meta->make_immutable;
 

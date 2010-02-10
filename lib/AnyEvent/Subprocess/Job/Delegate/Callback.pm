@@ -7,7 +7,8 @@ with 'AnyEvent::Subprocess::Job::Delegate';
 
 for my $a (qw/child_setup_hook child_finalize_hook
               parent_setup_hook parent_finalize_hook
-              completion_hook build_code_args receive_child_result/) {
+              completion_hook build_code_args receive_child_result
+              receive_child_error/) {
 
     has $a => (
         init_arg => $a,
@@ -62,6 +63,11 @@ sub build_code_args {
 sub receive_child_result {
     my ($self, $job, $result) = @_;
     return $self->_receive_child_result->($self, $job, $result);
+}
+
+sub receive_child_error {
+    my ($self, $job, $error) = @_;
+    return $self->_receive_child_error->($self, $job, $error);
 }
 
 1;

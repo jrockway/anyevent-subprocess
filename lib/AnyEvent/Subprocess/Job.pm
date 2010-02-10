@@ -38,13 +38,6 @@ has 'run_class' => (
     },
 );
 
-has 'verbose' => (
-    is       => 'ro',
-    isa      => 'Bool',
-    default  => sub { 1 },
-    required => 1,
-);
-
 sub _init_run_instance {
     my ($self) = @_;
     my $run = $self->run_class->new(
@@ -69,7 +62,6 @@ sub _child_setup_hook {
 sub _child_finalize_hook {
     my $self = shift;
     $self->_invoke_delegates('child_finalize_hook');
-    exit 0;
 }
 
 sub _parent_setup_hook {
@@ -90,29 +82,22 @@ sub _build_code_args {
     return $self->_invoke_delegates('build_code_args');
 }
 
-# XXX: it would be nice to "catch" exceptions in the child and throw
-# them to the parent
 sub _run_child {
     my $self = shift;
     my $args = shift || {};
 
-    # scope_guard {
-    #     exit 255;
-    # };
-
+    my $exit_code = 0;
+    $self->_child_setup_hook;
     try {
-        $self->_child_setup_hook;
         my $result = $self->code->({%$args, $self->_build_code_args});
         $self->_invoke_delegates('receive_child_result', $result);
-        $self->_child_finalize_hook;
-    }
-    catch {
-        # emulate perl's default behavior here
-        print {*STDERR} $_ if $self->verbose;
-        exit 255;
+    } catch {
+        my $error = $_;
+        $self->_invoke_delegates('receive_child_error', $error);
+        $exit_code = 255; # backcompat
     };
-
-    return;
+    $self->_child_finalize_hook;
+    exit $exit_code;
 }
 
 sub run {
