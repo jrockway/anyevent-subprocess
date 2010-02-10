@@ -102,7 +102,8 @@ sub _run_child {
 
     try {
         $self->_child_setup_hook;
-        $self->code->({%$args, $self->_build_code_args});
+        my $result = $self->code->({%$args, $self->_build_code_args});
+        $self->_invoke_delegates('receive_child_result', $result);
         $self->_child_finalize_hook;
     }
     catch {

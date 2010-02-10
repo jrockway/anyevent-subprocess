@@ -31,6 +31,7 @@ sub build_code_args {}
 sub child_finalize_hook {}
 sub child_setup_hook {}
 sub parent_finalize_hook {}
+sub receive_child_result {}
 
 1;
 

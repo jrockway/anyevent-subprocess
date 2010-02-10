@@ -9,7 +9,9 @@ my $is_done = 0;
 my $s = AnyEvent::Subprocess->new(
     code => sub {
         our $FOO;
-        print "OH HAI $FOO";
+        print "got an arg: ". $_[0]->{arg};
+        print "\nOH HAI $FOO\n";
+        return 222;
     },
     delegates => [
         'CompletionCondvar',
@@ -23,7 +25,7 @@ my $s = AnyEvent::Subprocess->new(
                 exit 42;
             },
             parent_setup_hook => sub {
-                my ($self, $run) = @_;
+                my ($self, $job, $run) = @_;
                 ok $run, 'got run in parent setup hook';
             },
             parent_finalize_hook => sub {
@@ -32,6 +34,13 @@ my $s = AnyEvent::Subprocess->new(
             completion_hook => sub {
                 ok !$is_done, 'completion_hook ran before completion_condvar was sent';
             },
+            build_code_args => sub {
+                return (arg => 'an arg');
+            },
+            receive_child_result => sub {
+                my ($self, $job, $result) = @_;
+                print "got result ok\n" if $result == 222;
+            }
         }},
     ],
 );
@@ -53,5 +62,5 @@ is $done->delegate('callback')->state->{whatever}, 42,
 my $out = $run->delegate('stdout')->handle->{rbuf};
 
 is $done->exit_value, 42, 'exit 42 in child_finalize_hook was called';
-is $out, 'OH HAI 123', 'got var set in child_setup_hook';
-
+is $out, "got an arg: an arg\nOH HAI 123\ngot result ok\n",
+  'got var set in child_setup_hook';

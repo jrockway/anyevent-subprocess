@@ -151,6 +151,7 @@ sub build_code_args {
 
 sub parent_setup_hook {}
 sub child_finalize_hook {}
+sub receive_child_result {}
 
 1;
 
