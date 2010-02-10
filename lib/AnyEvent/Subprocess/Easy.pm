@@ -16,6 +16,7 @@ sub _build_input_capture_job {
 
     my $proc = AnyEvent::Subprocess->new(
         delegates => [
+            'PrintError',
             { Handle => {
                 name      => 'stdout',
                 direction => 'r',

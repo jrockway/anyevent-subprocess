@@ -10,6 +10,7 @@ use AnyEvent::Subprocess::Job::Delegate::CaptureHandle;
 use AnyEvent::Subprocess::Job::Delegate::CompletionCondvar;
 use AnyEvent::Subprocess::Job::Delegate::Handle;
 use AnyEvent::Subprocess::Job::Delegate::MonitorHandle;
+use AnyEvent::Subprocess::Job::Delegate::PrintError;
 use AnyEvent::Subprocess::Job::Delegate::Pty;
 
 register_delegate( 'Handle' => 'AnyEvent::Subprocess::Job::Delegate::Handle' );
@@ -100,6 +101,13 @@ register_delegate( 'MonitorHandle' => sub {
     return AnyEvent::Subprocess::Job::Delegate::MonitorHandle->new(%$args);
 });
 
+register_delegate('PrintError' => sub {
+    my $args = shift || {};
+    $args->{name} ||= 'error_printer';
+
+    return AnyEvent::Subprocess::Job::Delegate::PrintError->new(%$args);
+});
+
 1;
 
 __END__
@@ -167,6 +175,13 @@ via a delegate in the "done class".)
 =head2 MonitorHandle
 
 Calls a list of coderefs whenever a line is read from a handle.
+
+=head2 PrintError
+
+Delegate that calls a callback in the child to print the exception (if
+any) the child throws.
+
+Use WithResult if you want to actually get the exception in the parent.
 
 =head1 SEE ALSO
 
