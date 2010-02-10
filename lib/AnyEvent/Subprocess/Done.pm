@@ -47,6 +47,8 @@ sub is_success {
     return $self->exit_status == 0;
 }
 
+__PACKAGE__->meta->make_immutable;
+
 1;
 
 __END__

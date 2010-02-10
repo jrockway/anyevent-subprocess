@@ -20,4 +20,6 @@ sub completion_hook {
 sub build_events {}
 sub build_done_delegates {}
 
+__PACKAGE__->meta->make_immutable;
+
 1;

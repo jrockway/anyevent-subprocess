@@ -113,6 +113,8 @@ sub BUILD {
     $self->child_event_joiner; # vivify
 }
 
+__PACKAGE__->meta->make_immutable;
+
 1;
 
 __END__

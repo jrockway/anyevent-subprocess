@@ -23,4 +23,6 @@ sub completion_hook {
     $self->_run_callbacks( $leftover ) if $leftover;
 }
 
+__PACKAGE__->meta->make_immutable;
+
 1;

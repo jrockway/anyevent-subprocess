@@ -5,6 +5,8 @@ with 'AnyEvent::Subprocess::Done::Delegate';
 
 has 'state' => ( is => 'ro', isa => 'HashRef', required => 1 );
 
+__PACKAGE__->meta->make_immutable;
+
 1;
 
 __END__

@@ -65,3 +65,5 @@ sub receive_child_result {
 }
 
 1;
+
+__PACKAGE__->meta->make_immutable;

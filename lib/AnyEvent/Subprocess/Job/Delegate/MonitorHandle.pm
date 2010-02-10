@@ -81,6 +81,8 @@ sub parent_finalize_hook {}
 sub build_code_args {}
 sub receive_child_result {}
 
+__PACKAGE__->meta->make_immutable;
+
 1;
 
 __END__

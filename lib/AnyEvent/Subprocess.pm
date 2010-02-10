@@ -8,6 +8,8 @@ use AnyEvent::Subprocess::DefaultDelegates;
 
 use namespace::autoclean;
 
+__PACKAGE__->meta->make_immutable;
+
 1;
 
 __END__
