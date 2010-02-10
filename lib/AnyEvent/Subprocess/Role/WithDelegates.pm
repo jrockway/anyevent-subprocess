@@ -16,6 +16,7 @@ role {
     my $p = shift;
 
     has 'delegate_list' => (
+        traits     => ['Clone'],
         init_arg   => 'delegates',
         reader     => '_delegate_list',
         isa        => ArrayRef[$p->type | Str | ArrayRef | HashRef],
