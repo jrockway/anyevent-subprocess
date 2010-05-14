@@ -23,6 +23,7 @@ has 'child_pid' => (
 has 'child_listener' => (
     is      => 'ro',
     lazy    => 1,
+    clearer => 'cleanup_child_watcher',
     default => sub {
         my $self = shift;
         confess 'child_listener being built too early'
@@ -33,6 +34,7 @@ has 'child_listener' => (
             cb => sub {
                 my ($pid, $status) = @_;
                 $self->child_event_joiner->send_event( child => $status );
+                $self->cleanup_child_watcher;
             },
         );
         return $child_listener;
