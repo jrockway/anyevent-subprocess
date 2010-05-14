@@ -113,6 +113,10 @@ sub run {
 
     $self->_parent_setup_hook($run);
 
+    # an event loop must exist before the fork, in case the child
+    # exits before we create the watcher
+    AnyEvent::detect();
+
     # TODO: configurable/delegate-able fork
     my $child_pid = fork;
     confess "fork error: $!" unless defined $child_pid;
