@@ -6,9 +6,6 @@ use AnyEvent::Subprocess::Types qw(JobDelegate SubprocessCode);
 use Try::Tiny;
 
 use namespace::autoclean;
-
-our $VERSION = '0.01';
-
 use Moose::Role;
 
 with 'AnyEvent::Subprocess::Role::WithDelegates' => {

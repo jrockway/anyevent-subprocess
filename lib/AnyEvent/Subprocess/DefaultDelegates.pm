@@ -12,6 +12,7 @@ use AnyEvent::Subprocess::Job::Delegate::Handle;
 use AnyEvent::Subprocess::Job::Delegate::MonitorHandle;
 use AnyEvent::Subprocess::Job::Delegate::PrintError;
 use AnyEvent::Subprocess::Job::Delegate::Pty;
+use AnyEvent::Subprocess::Job::Delegate::Timeout;
 
 register_delegate( 'Handle' => 'AnyEvent::Subprocess::Job::Delegate::Handle' );
 
@@ -108,6 +109,15 @@ register_delegate('PrintError' => sub {
     return AnyEvent::Subprocess::Job::Delegate::PrintError->new(%$args);
 });
 
+register_delegate( 'Timeout', sub {
+   my $args = shift;
+    return AnyEvent::Subprocess::Job::Delegate::Timeout->new(
+        name       => $args->{name} || 'timeout',
+        time_limit => $args->{time_limit} || $args->{timeout},
+        kill_with  => $args->{kill_with} || 9,
+    );
+});
+
 1;
 
 __END__
@@ -182,6 +192,11 @@ Delegate that calls a callback in the child to print the exception (if
 any) the child throws.
 
 Use WithResult if you want to actually get the exception in the parent.
+
+=head1 Timeout
+
+Kill the subprocess with a signal C<kill_with> after C<timeout>
+seconds elapse.  See L<AnyEvent::Subprocess::Job::Delegate::Timeout>.
 
 =head1 SEE ALSO
 

@@ -13,6 +13,7 @@ requires 'MooseX::Clone';
 requires 'MooseX::Role::Parameterized';
 requires 'MooseX::StrictConstructor';
 requires 'MooseX::Types', '0.19';
+requires 'MooseX::Types::Signal';
 requires 'POSIX';
 requires 'namespace::autoclean';
 requires 'Try::Tiny';
