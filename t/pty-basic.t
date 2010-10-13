@@ -58,8 +58,15 @@ $run->delegate('comm')->handle->push_read( line => sub {
     $run->delegate('comm')->handle->close_fh;
 } );
 
+my $timeout = AnyEvent->timer( after => 5, cb => sub {
+    diag "test subprocess failed to exit; this is strange";
+    done_testing;
+    exit 0;
+});
+
 my $done = $completion_condvar->recv();
 
+undef $timeout;
 
 isa_ok $done, 'AnyEvent::Subprocess::Done';
 is $done->exit_value, 0, 'got exit value 0';
