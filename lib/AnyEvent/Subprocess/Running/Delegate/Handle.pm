@@ -1,5 +1,6 @@
 package AnyEvent::Subprocess::Running::Delegate::Handle;
 use AnyEvent::Subprocess::Handle;
+use AnyEvent::Subprocess::Done::Delegate::Handle;
 
 use MooseX::Types::Moose qw(Str);
 use AnyEvent::Subprocess::Types qw(Direction);
@@ -21,6 +22,12 @@ has 'handle' => (
     required => 1,
 );
 
+has 'want_leftovers' => (
+    is       => 'ro',
+    isa      => 'Bool',
+    required => 1,
+);
+
 sub build_events {
     my ($self, $running) = @_;
 
@@ -31,8 +38,20 @@ sub build_events {
     return;
 }
 
-sub build_done_delegates {}
-sub completion_hook      {} # destroy handle?
+sub build_done_delegates {
+    my $self = shift;
+    my $h = $self->handle;
+    my $want = $self->want_leftovers ? 1 : undef;
+    my ($rbuf, $wbuf) = map { $want && delete $h->{$_} } qw/rbuf wbuf/;
+
+    return AnyEvent::Subprocess::Done::Delegate::Handle->new(
+        name => $self->name,
+        (defined $rbuf ? (rbuf => $rbuf) : ()),
+        (defined $wbuf ? (wbuf => $wbuf) : ()),
+    );
+}
+
+sub completion_hook {}
 
 sub BUILD {
     my ($self) = @_;

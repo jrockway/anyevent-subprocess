@@ -38,6 +38,12 @@ has 'pass_to_child' => (
     required => 1,
 );
 
+has 'want_leftovers' => (
+    is      => 'ro',
+    isa     => 'Bool',
+    default => 0,
+);
+
 has 'pipes' => (
     traits     => ['NoClone'],
     is         => 'ro',
@@ -107,9 +113,10 @@ sub _build_handle {
 sub build_run_delegates {
     my $self = shift;
     return $self->run_delegate_class->new(
-        name      => $self->name,
-        direction => $self->direction,
-        handle    => $self->handle,
+        name           => $self->name,
+        direction      => $self->direction,
+        handle         => $self->handle,
+        want_leftovers => $self->want_leftovers,
     );
 }
 

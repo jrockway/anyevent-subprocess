@@ -7,6 +7,12 @@ use POSIX qw(dup2);
 
 with 'AnyEvent::Subprocess::Job::Delegate';
 
+has 'want_leftovers' => (
+    is      => 'ro',
+    isa     => 'Bool',
+    default => 0,
+);
+
 has 'pty' => (
     traits     => ['NoClone'],
     is         => 'ro',
@@ -84,9 +90,10 @@ sub _build_handle {
 sub build_run_delegates {
     my $self = shift;
     return $self->run_delegate_class->new(
-        name      => $self->name,
-        direction => 'rw',
-        handle    => $self->handle,
+        name           => $self->name,
+        direction      => 'rw',
+        handle         => $self->handle,
+        want_leftovers => $self->want_leftovers,
     );
 }
 
