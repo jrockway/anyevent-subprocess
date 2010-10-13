@@ -13,6 +13,7 @@ use AnyEvent::Subprocess::Easy qw(qx_nonblock);
 }
 
 {
+    diag "The 'failed' message you are about to see is good.";
     # if you have a command with this name on your machine...
     my $cv = qx_nonblock('I CAN HAZ', 'CHEZBURGER?');
 
