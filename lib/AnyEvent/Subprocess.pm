@@ -2,7 +2,7 @@ package AnyEvent::Subprocess;
 use Moose;
 with 'AnyEvent::Subprocess::Job';
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use AnyEvent::Subprocess::DefaultDelegates;
 

@@ -1,3 +1,8 @@
+0.03        Wed Oct 13 12:57:23 CDT 2010
+            - add option to capture leftover wbuf/rbuf
+            - add timeout delegate
+            - add more information to tests to help debug pty failures
+
 0.02        Wed Feb 10 06:14:39 CST 2010
             - allow Job delegate to receive child return value and exception
             - don't "exit 0" in the child handler
