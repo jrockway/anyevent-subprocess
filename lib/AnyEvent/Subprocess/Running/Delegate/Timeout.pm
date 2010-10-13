@@ -32,4 +32,6 @@ sub build_done_delegates {
 sub build_events {}
 sub build_code_args {}
 
+__PACKAGE__->meta->make_immutable;
+
 1;

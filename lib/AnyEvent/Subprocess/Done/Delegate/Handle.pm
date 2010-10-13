@@ -16,4 +16,6 @@ has 'wbuf' => (
     predicate => 'has_wbuf',
 );
 
+__PACKAGE__->meta->make_immutable;
+
 1;

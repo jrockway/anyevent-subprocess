@@ -53,6 +53,8 @@ sub parent_finalize_hook {}
 sub receive_child_error {}
 sub receive_child_result {}
 
+__PACKAGE__->meta->make_immutable;
+
 1;
 
 __END__
