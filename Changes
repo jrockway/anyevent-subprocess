@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+1.102910 Mon Oct 18 05:35:59 CDT 2010
     - convert to Dist::Zilla
     - depend on a version of Event::Join that passes its tests with the newest Moose
       (seems like the Testers install Event::Join and an old Moose,
