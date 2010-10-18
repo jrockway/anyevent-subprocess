@@ -7,5 +7,6 @@ pm_to_blib
 MANIFEST
 Makefile.old
 /TAGS
-/AnyEvent-Subprocess-0.*
+/AnyEvent-Subprocess-*
 /MANIFEST.bak
+/.build
