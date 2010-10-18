@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Job::Delegate::CaptureHandle;
+# ABSTRACT: capture the data that comes in via a handle
 use Moose;
 use AnyEvent::Subprocess::Running::Delegate::CaptureHandle;
 
@@ -39,10 +40,6 @@ __PACKAGE__->meta->make_immutable;
 1;
 
 __END__
-
-=head1 NAME
-
-AnyEvent::Subprocess::Job::Delegate::CaptureHandle - capture the data that comes in via a handle
 
 =head1 DESCRIPTION
 

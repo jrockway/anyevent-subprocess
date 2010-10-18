@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Delegate;
+# ABSTRACT: role representing a delegate
 use Moose::Role;
 
 with 'MooseX::Clone';
@@ -12,10 +13,6 @@ has 'name' => (
 1;
 
 __END__
-
-=head1 NAME
-
-AnyEvent::Subprocess::Delegate - role representing a delegate
 
 =head1 DESCRIPTION
 

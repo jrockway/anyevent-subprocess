@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Running::Delegate;
+# ABSTRACT: delegate on the running process class
 use Moose::Role;
 
 with 'AnyEvent::Subprocess::Delegate';
@@ -37,10 +38,6 @@ requires 'completion_hook';
 1;
 
 __END__
-
-=head1 NAME
-
-AnyEvent::Subprocess::Running::Delegate - delegate on the running process class
 
 =head1 REQUIRED METHODS
 

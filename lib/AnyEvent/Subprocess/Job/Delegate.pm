@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Job::Delegate;
+# ABSTRACT: role that delegates on the Job class must implement
 use Moose::Role;
 
 with 'AnyEvent::Subprocess::Delegate';
@@ -15,7 +16,3 @@ requires 'receive_child_error';
 1;
 
 __END__
-
-=head1 NAME
-
-AnyEvent::Subprocess::Job::Delegate - role that delegates on the Job class must implement

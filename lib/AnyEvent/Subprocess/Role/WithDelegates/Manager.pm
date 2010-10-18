@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Role::WithDelegates::Manager;
+# ABSTRACT: manage delegate shortcuts
 use strict;
 use warnings;
 
@@ -56,10 +57,6 @@ sub build_delegate {
 1;
 
 __END__
-
-=head1 NAME
-
-AnyEvent::Subprocess::Role::WithDelegates::Manager - manage delegate shortcuts
 
 =head1 DESCRIPTION
 

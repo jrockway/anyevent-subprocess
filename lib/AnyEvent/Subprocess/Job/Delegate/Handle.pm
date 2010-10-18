@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Job::Delegate::Handle;
+# ABSTRACT: share a filehandle or socket with the child
 use AnyEvent;
 use AnyEvent::Util qw(portable_pipe portable_socketpair);
 use AnyEvent::Subprocess::Handle;
@@ -166,10 +167,6 @@ __PACKAGE__->meta->make_immutable;
 1;
 
 __END__
-
-=head1 NAME
-
-AnyEvent::Subprocess::Job::Delegate::Handle - share a filehandle or socket with the child
 
 =head1 INITARGS
 

@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Job;
+# ABSTRACT: role representing a runnable job
 
 use AnyEvent;
 use AnyEvent::Subprocess::Types qw(JobDelegate SubprocessCode);
@@ -131,10 +132,6 @@ sub run {
 1;
 
 __END__
-
-=head1 NAME
-
-AnyEvent::Subprocess::Job - role representing a runnable job
 
 =head1 ATTRIBUTES
 

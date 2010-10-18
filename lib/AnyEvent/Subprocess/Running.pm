@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Running;
+# ABSTRACT: represents a running subprocess
 use Moose;
 use Event::Join;
 
@@ -120,10 +121,6 @@ __PACKAGE__->meta->make_immutable;
 1;
 
 __END__
-
-=head1 NAME
-
-AnyEvent::Subprocess::Running - represents a running subprocess
 
 =head1 SYNOPSIS
 

@@ -1,8 +1,9 @@
 package AnyEvent::Subprocess;
+# ABSTRACT: flexible, OO, asynchronous process spawning and management
 use Moose;
 with 'AnyEvent::Subprocess::Job';
 
-our $VERSION = '0.03';
+our $VERSION;
 
 use AnyEvent::Subprocess::DefaultDelegates;
 
@@ -13,10 +14,6 @@ __PACKAGE__->meta->make_immutable;
 1;
 
 __END__
-
-=head1 NAME
-
-AnyEvent::Subprocess - flexible, OO, asynchronous process spawning and management
 
 =head1 SYNOPSIS
 
@@ -208,19 +205,3 @@ things in there.  (Note that EV is designed to allow the child to
 handle events that the parent created watchers for.  You can do that
 just fine.  It's if you want a fresh event loop with no existing
 watchers that doesn't work well yet.)
-
-=head1 AUTHOR
-
-Jonathan Rockway C<< <jrockway@cpan.org> >>
-
-Yuval Kogman helped with the design.  His suggestions make it possible
-to easily spawn thousands of processes a second.  Might not be a good
-thing to do, but this module isn't going to be your bottleneck.  Perl
-is fast!
-
-=head1 COPYRIGHT
-
-Copyright (c) 2009 Jonathan Rockway.
-
-This module is Free software, you can redistribute it under the same
-terms as Perl itself.

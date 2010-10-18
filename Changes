@@ -1,25 +1,32 @@
-0.03        Wed Oct 13 12:57:23 CDT 2010
-            - add option to capture leftover wbuf/rbuf
-            - add timeout delegate
-            - add more information to tests to help debug pty failures
+{{$NEXT}}
+    - convert to Dist::Zilla
+    - depend on a version of Event::Join that passes its tests with the newest Moose
+      (seems like the Testers install Event::Join and an old Moose,
+      then upgrade Moose, then run my tests.  wtf!?)
+    - improve docs
 
-0.02        Wed Feb 10 06:14:39 CST 2010
-            - allow Job delegate to receive child return value and exception
-            - don't "exit 0" in the child handler
-            - remove our own exception-printing code
-            - add PrintError delegate (use this instead)
-            - fix cloning of Job delegates (they are cloned correctly now)
-            - make classes immutable
-            - doc fixes (but not everything)
-            - dependency fixes
+0.03 Wed Oct 13 12:57:23 CDT 2010
+    - add option to capture leftover wbuf/rbuf
+    - add timeout delegate
+    - add more information to tests to help debug pty failures
 
-0.01        Thu Feb  4 04:41:11 CST 2010
-            - delegates get the instance they are attached to
-            - run can be called multiple times
-            - lots more docs and examples (still needs more!)
+0.02 Wed Feb 10 06:14:39 CST 2010
+    - allow Job delegate to receive child return value and exception
+    - don't "exit 0" in the child handler
+    - remove our own exception-printing code
+    - add PrintError delegate (use this instead)
+    - fix cloning of Job delegates (they are cloned correctly now)
+    - make classes immutable
+    - doc fixes (but not everything)
+    - dependency fixes
 
-0.00_01     Mon Oct 26 03:13:21 CDT 2009
-            - developer preview
-            * needs a lot more docs
-            * a few design decisions still in question
-             - should delegates get the instance they are attached to?
+0.01 Thu Feb  4 04:41:11 CST 2010
+    - delegates get the instance they are attached to
+    - run can be called multiple times
+    - lots more docs and examples (still needs more!)
+
+0.00_01 Mon Oct 26 03:13:21 CDT 2009
+    - developer preview
+    * needs a lot more docs
+    * a few design decisions still in question
+     - should delegates get the instance they are attached to?

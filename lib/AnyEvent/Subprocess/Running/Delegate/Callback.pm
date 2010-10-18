@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Running::Delegate::Callback;
+# ABSTRACT: the C<Running> part of the Callback delegate
 use Moose;
 
 use AnyEvent::Subprocess::Done::Delegate::State; # name change
@@ -38,3 +39,10 @@ sub build_events {}
 __PACKAGE__->meta->make_immutable;
 
 1;
+
+__END__
+
+=head1 DESCRIPTION
+
+Calls the completion hook that was setup in the Job delegate, passes
+saved state to the Done delegate.

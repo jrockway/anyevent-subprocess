@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Handle;
+# ABSTRACT: AnyEvent::Handle subclass with some additional methods for AnyEvent::Subprocess
 use strict;
 use warnings;
 use AnyEvent;
@@ -85,10 +86,6 @@ sub destroy {
 1;
 
 __END__
-
-=head1 NAME
-
-AnyEvent::Subprocess::Handle - C<AnyEvent::Handle> subclass
 
 =head1 DESCRIPTION
 

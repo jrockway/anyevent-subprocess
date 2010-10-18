@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Done;
+# ABSTRACT: represents a completed subprocess run
 use Moose;
 
 use AnyEvent::Subprocess::Types qw(DoneDelegate);
@@ -52,10 +53,6 @@ __PACKAGE__->meta->make_immutable;
 1;
 
 __END__
-
-=head1 NAME
-
-AnyEvent::Subprocess::Done - represents a completed subprocess run
 
 =head1 SYNOPSIS
 

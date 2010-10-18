@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Types;
+# ABSTRACT: C<MooseX::Types> used internally
 use MooseX::Types -declare => [ qw{
     Direction
     JobDelegate
@@ -41,10 +42,6 @@ enum WhenToCallBack, qw/Readable Line/;
 
 __END__
 
-=head1 NAME
-
-AnyEvent::Subprocess::Types - C<MooseX::Types> used internally
-
 =head1 TYPES
 
     Direction
@@ -52,3 +49,5 @@ AnyEvent::Subprocess::Types - C<MooseX::Types> used internally
     RunDelegate
     DoneDelegate
     SubprocessCode
+    CodeList
+    WhenToCallBack

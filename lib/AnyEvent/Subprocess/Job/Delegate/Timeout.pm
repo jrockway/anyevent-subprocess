@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Job::Delegate::Timeout;
+# ABSTRACT: Kill a subprocess if it takes too long
 use Moose;
 use namespace::autoclean;
 
@@ -58,10 +59,6 @@ __PACKAGE__->meta->make_immutable;
 1;
 
 __END__
-
-=head1 NAME
-
-AnyEvent::Subprocess::Job::Delegate::Timeout - Kill a subprocess if it takes too long
 
 =head1 SYNOPSIS
 

@@ -1,4 +1,6 @@
 package AnyEvent::Subprocess::DefaultDelegates;
+# ABSTRACT: sets up default delegate name/builder mappings
+
 use strict;
 use warnings;
 use Carp qw(confess);
@@ -121,10 +123,6 @@ register_delegate( 'Timeout', sub {
 1;
 
 __END__
-
-=head1 NAME
-
-AnyEvent::Subprocess::Delegates - sets up default delegate name/builder mappings
 
 =head1 DELEGATES PROVIDED
 

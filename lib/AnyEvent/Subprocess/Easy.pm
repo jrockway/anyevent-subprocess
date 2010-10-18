@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Easy;
+# ABSTRACT: wrappers around AnyEvent::Subprocess to save typing in simple cases
 use strict;
 use warnings;
 
@@ -68,10 +69,6 @@ sub qx_nonblock {
 1;
 
 __END__
-
-=head1 NAME
-
-AnyEvent::Subprocess::Easy - wrappers around AnyEvent::Subprocess to save typing in simple cases
 
 =head1 SYNOPSIS
 

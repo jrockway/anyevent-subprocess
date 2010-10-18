@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Job::Delegate::Pty;
+# ABSTRACT: give the child a pseudo-terminal
 use IO::Pty;
 use namespace::autoclean;
 
@@ -128,10 +129,6 @@ __PACKAGE__->meta->make_immutable;
 1;
 
 __END__
-
-=head1 NAME
-
-AnyEvent::Subprocess::Job::Delegate::Pty - give the child a pseudo-terminal
 
 =head1 DESCRIPTION
 

@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Running::Delegate::CompletionCondvar;
+# ABSTRACT: Running part of the CompletionCondvar delegate
 use Moose;
 use AnyEvent;
 
@@ -23,3 +24,19 @@ sub build_done_delegates {}
 __PACKAGE__->meta->make_immutable;
 
 1;
+
+__END__
+
+=head1 ATTRIBUTES
+
+=head2 condvar
+
+An L<AnyEvent::Condvar> that is invoked with the C<Done> instance when
+the process exits.
+
+=head3 send
+
+=head3 recv
+
+These methods are delegated from the condvar to this class, to save a
+bit of typing.
