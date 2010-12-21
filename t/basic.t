@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 8;
+use Test::More tests => 12;
 
 use ok 'AnyEvent::Subprocess';
 
@@ -35,6 +35,10 @@ my $done = $condvar->recv;
 isa_ok $done, 'AnyEvent::Subprocess::Done';
 
 is $done->exit_value, 0, 'got exit status 0';
+is $done->exit_signal, 0, 'no signal';
+ok $done->exited, 'exited normally';
+ok !$done->dumped_core, 'no dump';
+ok $done->is_success, 'success';
 
 like $run->delegate('stderr')->handle->{rbuf},
   qr/^starting child foo.*^child is done/ms,

@@ -1,8 +1,10 @@
 package AnyEvent::Subprocess::Done;
 # ABSTRACT: represents a completed subprocess run
 use Moose;
+use namespace::autoclean;
 
 use AnyEvent::Subprocess::Types qw(DoneDelegate);
+use POSIX qw(WIFEXITED WEXITSTATUS WIFSIGNALED WIFEXITED WTERMSIG);
 
 with 'AnyEvent::Subprocess::Role::WithDelegates' => {
     type => DoneDelegate,
@@ -16,7 +18,7 @@ has 'exit_status' => (
     required => 1,
 );
 
-has 'dumped_core' => (
+has [qw[dumped_core exited]] => (
     is         => 'ro',
     isa        => 'Bool',
     lazy_build => 1,
@@ -28,21 +30,24 @@ has [qw[exit_value exit_signal]] => (
     lazy_build => 1,
 );
 
+sub _build_exited {
+    my $self = shift;
+    return WIFEXITED($self->exit_status);
+}
+
 sub _build_exit_value {
     my $self = shift;
-    return -1 if $self->exit_status == -1;
-    return $self->exit_status >> 8;
+    return WEXITSTATUS($self->exit_status);
 }
 
 sub _build_exit_signal {
     my $self = shift;
-    return 0 if $self->exit_status == -1;
-    return $self->exit_status & 127;
+    return WIFSIGNALED($self->exit_status) && WTERMSIG($self->exit_status);
 }
 
 sub _build_dumped_core {
     my $self = shift;
-    return 0 if $self->exit_status == -1;
+    return 0 if $self->exit_status < 0;
     return $self->exit_status & 128;
 }
 
