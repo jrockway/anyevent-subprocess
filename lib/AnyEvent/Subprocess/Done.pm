@@ -30,16 +30,19 @@ has [qw[exit_value exit_signal]] => (
 
 sub _build_exit_value {
     my $self = shift;
+    return -1 if $self->exit_status == -1;
     return $self->exit_status >> 8;
 }
 
 sub _build_exit_signal {
     my $self = shift;
+    return 0 if $self->exit_status == -1;
     return $self->exit_status & 127;
 }
 
 sub _build_dumped_core {
     my $self = shift;
+    return 0 if $self->exit_status == -1;
     return $self->exit_status & 128;
 }
 

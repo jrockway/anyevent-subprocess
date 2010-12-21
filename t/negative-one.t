@@ -1,0 +1,15 @@
+use strict;
+use warnings;
+use Test::More;
+use AnyEvent::Subprocess::Done;
+
+my $done = AnyEvent::Subprocess::Done->new(
+    exit_status => -1,
+);
+
+is $done->exit_value, -1, '-1 exit value';
+is $done->exit_signal, 0, 'no signal';
+ok !$done->dumped_core, 'no dump';
+ok !$done->is_success, 'not a success';
+
+done_testing;
