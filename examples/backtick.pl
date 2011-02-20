@@ -2,7 +2,6 @@
 
 use strict;
 use warnings;
-use feature ':5.10';
 
 use AnyEvent::Subprocess::Easy qw(qx_nonblock);
 

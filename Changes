@@ -1,4 +1,9 @@
 {{$NEXT}}
+    - handle $? "parsing" with POSIX module instead of with ad-hoc bit-shifts
+      (Thanks to RJBS for the idea and a bug report.)
+    - support perl 5.8 (tested with 5.8.9, probably works with others)
+      (Thanks to Andreas Koenig (ANDK@cpan.org) for noticing the
+       unnecessary 5.10 dep)
 
 1.102910 Mon Oct 18 05:35:59 CDT 2010
     - convert to Dist::Zilla
