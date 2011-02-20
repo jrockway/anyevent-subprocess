@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+1.102911 Sat Feb 19 06:20:15 CST 2011
     - handle $? "parsing" with POSIX module instead of with ad-hoc bit-shifts
       (Thanks to RJBS for the idea and a bug report.)
     - support perl 5.8 (tested with 5.8.9, probably works with others)
