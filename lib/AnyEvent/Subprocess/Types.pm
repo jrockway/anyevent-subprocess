@@ -36,7 +36,7 @@ coerce SubprocessCode, from ArrayRef[Str], via {
 subtype CodeList, as ArrayRef[CodeRef];
 coerce CodeList, from CodeRef, via { [$_] };
 
-enum WhenToCallBack, qw/Readable Line/;
+enum WhenToCallBack, [qw/Readable Line/];
 
 1;
 
