@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Job::Delegate::MonitorHandle;
+
 # ABSTRACT: monitor a handle for input and invoke callbacks with that input
 use AnyEvent::Subprocess::Running::Delegate::MonitorHandle;
 use AnyEvent::Subprocess::Types qw(CodeList WhenToCallBack);

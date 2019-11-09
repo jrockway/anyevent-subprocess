@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Done;
+
 # ABSTRACT: represents a completed subprocess run
 use Moose;
 use namespace::autoclean;

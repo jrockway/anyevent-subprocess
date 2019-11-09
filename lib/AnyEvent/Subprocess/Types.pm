@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Types;
+
 # ABSTRACT: C<MooseX::Types> used internally
 use MooseX::Types -declare => [ qw{
     Direction

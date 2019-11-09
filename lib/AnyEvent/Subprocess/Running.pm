@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Running;
+
 # ABSTRACT: represents a running subprocess
 use Moose;
 use Event::Join;

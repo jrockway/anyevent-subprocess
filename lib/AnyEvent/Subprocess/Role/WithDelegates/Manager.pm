@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Role::WithDelegates::Manager;
+
 # ABSTRACT: manage delegate shortcuts
 use strict;
 use warnings;

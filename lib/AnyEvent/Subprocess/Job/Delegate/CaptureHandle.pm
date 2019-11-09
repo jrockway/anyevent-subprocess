@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Job::Delegate::CaptureHandle;
+
 # ABSTRACT: capture the data that comes in via a handle
 use Moose;
 use AnyEvent::Subprocess::Running::Delegate::CaptureHandle;

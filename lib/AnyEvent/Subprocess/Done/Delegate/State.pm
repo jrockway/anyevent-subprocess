@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Done::Delegate::State;
+
 # ABSTRACT: thread state through the job/run/done lifecycle
 use Moose;
 

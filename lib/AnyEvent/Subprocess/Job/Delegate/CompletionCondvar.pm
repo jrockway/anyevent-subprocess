@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Job::Delegate::CompletionCondvar;
+
 # ABSTRACT: provide a condvar to indicate completion
 use AnyEvent::Subprocess::Running::Delegate::CompletionCondvar;
 use Moose;

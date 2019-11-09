@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Job::Delegate::Callback;
+
 # ABSTRACT: call callbacks for each job/run/done step
 use AnyEvent::Subprocess::Running::Delegate::Callback;
 use Moose;

@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Job::Delegate::PrintError;
+
 # ABSTRACT: Print errors to a filehandle
 use Moose;
 use namespace::autoclean;

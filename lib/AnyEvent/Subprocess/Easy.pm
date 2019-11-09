@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Easy;
+
 # ABSTRACT: wrappers around AnyEvent::Subprocess to save typing in simple cases
 use strict;
 use warnings;

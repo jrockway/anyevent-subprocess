@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Done::Delegate::Handle;
+
 # ABSTRACT: store leftover wbuf/rbuf from running Handle
 use Moose;
 use namespace::autoclean;

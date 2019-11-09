@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Job::Delegate;
+
 # ABSTRACT: role that delegates on the Job class must implement
 use Moose::Role;
 
