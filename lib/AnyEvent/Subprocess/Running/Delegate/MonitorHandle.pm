@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Running::Delegate::MonitorHandle;
+
 # ABSTRACT: Running part of the MonitorHandle delegate
 use Moose;
 use namespace::clean;

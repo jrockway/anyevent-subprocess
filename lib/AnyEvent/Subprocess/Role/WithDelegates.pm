@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Role::WithDelegates;
+
 # ABSTRACT: paramaterized role consumed by classes that have delegates
 use MooseX::Role::Parameterized;
 

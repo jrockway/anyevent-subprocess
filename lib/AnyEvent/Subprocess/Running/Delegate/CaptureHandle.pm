@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Running::Delegate::CaptureHandle;
+
 # ABSTRACT: Running part of the CaptureHandle delegate
 use Moose;
 use AnyEvent::Subprocess::Done::Delegate::CaptureHandle;

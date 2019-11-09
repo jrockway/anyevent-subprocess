@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Job::Delegate::Handle;
+
 # ABSTRACT: share a filehandle or socket with the child
 use AnyEvent;
 use AnyEvent::Util qw(portable_pipe portable_socketpair);

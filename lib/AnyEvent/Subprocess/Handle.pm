@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Handle;
+
 # ABSTRACT: AnyEvent::Handle subclass with some additional methods for AnyEvent::Subprocess
 use strict;
 use warnings;

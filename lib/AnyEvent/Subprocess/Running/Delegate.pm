@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Running::Delegate;
+
 # ABSTRACT: delegate on the running process class
 use Moose::Role;
 

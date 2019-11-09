@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Job::Delegate::Timeout;
+
 # ABSTRACT: Kill a subprocess if it takes too long
 use Moose;
 use namespace::autoclean;

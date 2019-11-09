@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Running::Delegate::Timeout;
+
 # ABSTRACT: Running part of Timeout delegate
 use Moose;
 use namespace::autoclean;

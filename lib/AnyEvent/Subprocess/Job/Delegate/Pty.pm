@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Job::Delegate::Pty;
+
 # ABSTRACT: give the child a pseudo-terminal
 use IO::Pty;
 use namespace::autoclean;

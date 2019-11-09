@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Running::Delegate::Callback;
+
 # ABSTRACT: the C<Running> part of the Callback delegate
 use Moose;
 

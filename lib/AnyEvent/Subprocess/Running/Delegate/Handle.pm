@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Running::Delegate::Handle;
+
 # ABSTRACT: Running part of the Handle delegate
 use AnyEvent::Subprocess::Handle;
 use AnyEvent::Subprocess::Done::Delegate::Handle;

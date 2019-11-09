@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Done::Delegate::Timeout;
+
 # ABSTRACT: done delegate for a job that can time out
 use Moose;
 use namespace::autoclean;

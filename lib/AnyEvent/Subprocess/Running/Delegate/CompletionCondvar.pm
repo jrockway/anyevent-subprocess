@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Running::Delegate::CompletionCondvar;
+
 # ABSTRACT: Running part of the CompletionCondvar delegate
 use Moose;
 use AnyEvent;

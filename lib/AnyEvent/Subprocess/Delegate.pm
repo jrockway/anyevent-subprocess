@@ -1,4 +1,5 @@
 package AnyEvent::Subprocess::Delegate;
+
 # ABSTRACT: role representing a delegate
 use Moose::Role;
 
