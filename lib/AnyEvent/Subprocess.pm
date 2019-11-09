@@ -1,9 +1,8 @@
 package AnyEvent::Subprocess;
+
 # ABSTRACT: flexible, OO, asynchronous process spawning and management
 use Moose;
 with 'AnyEvent::Subprocess::Job';
-
-our $VERSION;
 
 use AnyEvent::Subprocess::DefaultDelegates;
 
